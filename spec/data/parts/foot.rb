@@ -1,0 +1,2 @@
+class Foot
+end

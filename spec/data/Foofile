@@ -1,0 +1,3 @@
+motivation 'spec/data', strict: true
+
+foo

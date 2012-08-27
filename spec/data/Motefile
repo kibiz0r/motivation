@@ -1,0 +1,13 @@
+motivation 'spec/data', strict: true
+
+robot
+
+parts do
+  left_leg :leg,
+    foot: 'left_foot' # wouldn't it be sweet if you could leave off the quotes?
+  right_leg :leg,
+    foot: 'right_foot'
+
+  left_foot :foot
+  right_foot :foot
+end
