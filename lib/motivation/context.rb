@@ -79,7 +79,7 @@ module Motivation
     end
 
     def [](name)
-      mote(name).factory
+      mote(name).try :factory
     end
 
     def self.[](name)
@@ -87,15 +87,20 @@ module Motivation
     end
 
     def instantiate(name)
-      factory = self[name]
-
-      if factory.motivated_attrs.size > 0
-        filled_dependencies = Hash[factory.motivated_attrs.map do |dep|
-          [dep, instantiate(dep)]
-        end]
-        factory.new filled_dependencies
+      if name.end_with? '_factory'
+        name = name.gsub(/_factory$/, '') unless self[name]
+        self[name]
       else
-        factory.new
+        factory = self[name]
+
+        if factory.motivated_attrs.size > 0
+          filled_dependencies = Hash[factory.motivated_attrs.map do |dep|
+            [dep, instantiate(dep)]
+          end]
+          factory.new filled_dependencies
+        else
+          factory.new
+        end
       end
     end
 
