@@ -109,6 +109,7 @@ Motives are the metadata attached to containers and motes. Some motives inherit 
 
 You can define your own motives inside or outside of your Motefile. The `motive` macro takes the name of your motive and its default value (can be a lambda, which is `instance_eval`'d  on the created mote). The body of the macro is module_eval'd in a generated module that gets included on the mote's metaclass. Motives are included in the order they are defined, so you can use super to fall back to the original implementation.
 
+	# Motivation.motive! outside of a Motefile
 	motive opaque: lambda { inherited_opt :opaque, false } do
 		def can_require?
 			!self.opaque && super
