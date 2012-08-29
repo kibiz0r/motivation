@@ -1,25 +1,44 @@
 module Motivation
-  def self.require(motefile = './Motefile')
-    Motivation::Context.current = Motivation::ContextLoader.require motefile
+  attr_reader :motives
+
+  def self.motive!(*args, &block)
+    @motives ||= []
+    @motives << Motive.new(*args, &block)
   end
 
-  def self.namespaces
-    Motivation::Context.current.namespaces
+  def self.resolver!(*args, &block)
+    @resolvers ||= []
+    @resolvers << Resolver.new(*args, &block)
   end
 
-  def self.motes
-    Motivation::Context.current.motes
+  def self.method_missing(*args, &block)
+    Context.current.resolve! *args, &block
   end
+end
 
-  def self.method_missing(mote, *args, &block)
-    mote = mote.to_s
-    instantiate = mote.end_with? '!'
-    mote = mote.gsub '!', ''
+class Object
+  def _?(x = nil)
+    self
+  end
+end
 
-    if instantiate
-      Motivation::Context.instantiate mote
+class NilClass
+  def _?(x = nil)
+    if block_given?
+      yield
     else
-      Motivation::Context[mote]
+      x
+    end
+  end
+end
+
+class Class
+  def init_attr(attrs)
+    attrs.each do |attr, default|
+      ivar = :"@#{attr}"
+      define_method attr do
+        instance_variable_get(ivar)._? { instance_variable_set(ivar, default.dup) }
+      end
     end
   end
 end
