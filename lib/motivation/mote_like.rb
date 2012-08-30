@@ -1,36 +1,47 @@
 module Motivation
   module MoteLike
-    attr_reader :name, :motives, :parent
+    attr_reader :name, :motives, :parent, :specified_opts
 
     def initialize(*args)
-      @args = args.extract_options!
+      @specified_opts = args.extract_options!
       @parent, _ = args
 
-      @name = @args[:name]._? ''
-      @motives = @args[:motives]._? []
+      @name = specified_opts[:name]._? ''
+      @motives = specified_opts[:motives]._? []
 
-      @motives.each do |motive|
+      motives.each do |motive|
         extend motive
       end
     end
 
     def opt(name)
-      @args[name]
+      opts[name]
+    end
+
+    def opts
+      specified_opts
+    end
+
+    def motive_opts
+      Hash[@motives.map do |motive|
+        [motive.opt_name, send(motive.opt_name)]
+      end]
+    end
+
+    def specify(opt, value)
+      @specified_opts[opt] = value
+    end
+
+    def specified_opt(opt)
+      specified_opts[opt]
     end
 
     def inherited_opt(name, default = nil)
-      return default unless parent
-      parent.opt(name)._? do
-        parent.inherited_opt(name)._? default
-      end
-    end
-
-    def args
-      @args.merge @parent.try(:args)._?({})
+      parent.try(:opt, name)._? default
     end
 
     def ==(other)
-      name == other.name && parent.equal?(other.parent)
+      parent.equal?(other.parent) && opts == other.opts
     end
   end
 end

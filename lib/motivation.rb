@@ -1,4 +1,5 @@
 require 'active_support/all'
+require 'motivation/mote_loader'
 require 'motivation/motivation'
 require 'motivation/mote_like'
 require 'motivation/container'

@@ -6,8 +6,8 @@ describe Motivation::Container do
       described_class.new foo: 'bar'
     end
 
-    it "makes opts available as args" do
-      subject.args.should == { foo: 'bar' }
+    it "makes opts available" do
+      subject.opts.should == { foo: 'bar' }
     end
 
     context "within a parent container with arbitrary opts" do
@@ -19,8 +19,8 @@ describe Motivation::Container do
         described_class.new parent, iphone: 'rox'
       end
 
-      it "combines args with parent args" do
-        subject.args.should == { foo: 'bar', iphone: 'rox' }
+      it "combines opts with parent opts" do
+        subject.opts.should == { foo: 'bar', iphone: 'rox' }
       end
     end
   end
@@ -35,7 +35,7 @@ describe Motivation::Container do
     end
 
     it "makes parent opts available as args" do
-      subject.args.should == { foo: 'bar' }
+      subject.opts.should == { foo: 'bar' }
     end
   end
 
@@ -98,6 +98,16 @@ describe Motivation::Container do
     it "stores the mote" do
       subject.mote! 'my_mote'
       subject.motes.should == [Motivation::Mote.new(subject, name: 'my_mote')]
+    end
+
+    context "when this container has opts" do
+      subject do
+        described_class.new foo: 'bar'
+      end
+
+      it "combines the mote opts with those of this container" do
+        subject.mote!('my_mote', power: 'rangers').should == Motivation::Mote.new(subject, foo: 'bar', name: 'my_mote', power: 'rangers')
+      end
     end
   end
 end

@@ -12,7 +12,13 @@ module Motivation
   end
 
   def self.method_missing(*args, &block)
+    p args
+    puts caller.join("\n")
     Context.current.resolve! *args, &block
+  end
+
+  def self.require
+    MoteLoader.new(Context.new).require 'Motefile'
   end
 end
 

@@ -8,8 +8,8 @@ module Motivation
       super
     end
 
-    def container!(name)
-      Motivation::Container.new(self, name: name, motives: @motives).tap { |c| @containers[name] = c }
+    def container!(name, opts = {})
+      Motivation::Container.new(self, opts.merge(name: name, motives: @motives)).tap { |c| @containers[name] = c }
     end
 
     def container(name)
@@ -20,8 +20,8 @@ module Motivation
       @containers.values
     end
 
-    def mote!(name)
-      Motivation::Mote.new(self, name: name).tap { |m| @motes[name] = m }
+    def mote!(name, opts = {})
+      Motivation::Mote.new(self, opts.merge(name: name)).tap { |m| @motes[name] = m }
     end
 
     def mote(name)
