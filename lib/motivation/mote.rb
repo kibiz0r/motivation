@@ -29,12 +29,12 @@ module Motivation
     end
 
     def require
-      super path unless motion
+      super path unless motion || defined?(UIView)
     end
 
     def load_factory
       require
-      @opts[:factory].to_s.classify.constantize
+      @opts[:factory].to_s.camelize(:upper).constantize
     end
 
     def ==(other)
