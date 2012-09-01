@@ -10,6 +10,7 @@ module Motivation
     def initialize(&block)
       @motes = {}
       @namespaces = {}
+      @instances = {}
       motivation
       Motivation::Context.current = self
       if block_given?
@@ -91,7 +92,10 @@ module Motivation
         name = name.gsub(/_factory$/, '') unless self[name]
         self[name]
       else
+        return @instances[name.to_sym] if @instances[name.to_sym]
         factory = self[name]
+
+        raise "no factory found for #{name}" unless factory
 
         if factory.motivated_attrs.size > 0
           filled_dependencies = Hash[factory.motivated_attrs.map do |dep|
@@ -100,7 +104,7 @@ module Motivation
           factory.new filled_dependencies
         else
           factory.new
-        end
+        end.tap { |i| @instances[name.to_sym] = i }
       end
     end
 
