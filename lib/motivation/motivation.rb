@@ -12,8 +12,6 @@ module Motivation
   end
 
   def self.method_missing(*args, &block)
-    p args
-    puts caller.join("\n")
     Context.current.resolve! *args, &block
   end
 

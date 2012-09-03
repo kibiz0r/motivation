@@ -5,10 +5,11 @@ describe Motivation::Context do
     context "when the mote exists" do
       before do
         @foo = subject.mote! :foo
+        stub(@foo).constant { :foo_constant }
       end
 
       it "returns the mote" do
-        subject.resolve!(:foo).should == @foo
+        subject.resolve!(:foo).should == :foo_constant
       end
     end
 
@@ -25,6 +26,7 @@ describe Motivation::Context do
         end
 
         let :resolver2 do
+          Object.new
         end
 
         let :resolvers do
@@ -32,10 +34,10 @@ describe Motivation::Context do
         end
 
         it "takes the first non-nil result from asking resolvers" do
-          mock(resolver1).resolve!(:foo) { nil }
-          stub(resolver2).resolve!(:foo) { :bar }
+          mock(resolver1).resolve!(:foo, 'arg1', opt: 'val') { nil }
+          stub(resolver2).resolve!(:foo, 'arg1', opt: 'val') { :bar }
           subject.resolvers = resolvers
-          subject.resolve!(:foo).should == :bar
+          subject.resolve!(:foo, 'arg1', opt: 'val').should == :bar
         end
       end
     end

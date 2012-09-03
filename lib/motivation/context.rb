@@ -14,9 +14,9 @@ module Motivation
       super
     end
 
-    def resolve!(name)
-      resolvers.inject mote(name) do |resolved, resolver|
-        resolved || resolver.resolve!(name)
+    def resolve!(name, *args)
+      resolvers.inject mote(name).try(:resolve!, *args) do |resolved, resolver|
+        resolved._? { resolver.try :resolve!, name, *args }
       end
     end
 
