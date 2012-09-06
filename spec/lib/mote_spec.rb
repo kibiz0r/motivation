@@ -1,6 +1,29 @@
 require 'spec_helper'
 
 describe Motivation::Mote do
+  describe "#locate_mote" do
+    context "without a context" do
+      it "returns nil" do
+        subject.locate_mote(:foo).should be_nil
+      end
+    end
+
+    context "with a context" do
+      let :context do
+        Object.new
+      end
+
+      subject do
+        described_class.new context: context
+      end
+
+      it "returns the context's located mote" do
+        stub(context).locate_mote(:foo) { :located_foo }
+        subject.locate_mote(:foo).should == :located_foo
+      end
+    end
+  end
+
   context "with arbitrary opts" do
     subject do
       described_class.new foo: 'bar'
@@ -26,22 +49,8 @@ describe Motivation::Mote do
       described_class.new name: 'my_mote'
     end
 
-    context "when mote doesn't respond to #constant" do
-      it "raises an error" do
-        lambda { subject.resolve! }.should raise_method_error(:constant, from: 'Mote#resolve!')
-      end
-    end
-
-    context "when mote responds to #constant" do
-      before do
-        def subject.constant
-          :foo
-        end
-      end
-
-      it "returns #constant" do
-        subject.resolve!.should == :foo
-      end
+    it "returns nil by default" do
+      subject.resolve!.should be_nil
     end
   end
 
@@ -49,7 +58,7 @@ describe Motivation::Mote do
     context "when a motive declares the opt" do
       let :motive do
         Module.new.tap do |m|
-          stub(m).opt_name { 'arch' }
+          stub(m).opts { [:arch] }
         end
       end
 

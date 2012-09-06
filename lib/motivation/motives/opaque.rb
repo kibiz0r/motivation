@@ -1,5 +1,5 @@
-Motivation.motive! opaque: lambda { inherited_opt :opaque, false } do
-  def can_require?
-    !opaque && super
+Motivation.motive! :opaque, opaque: lambda { inherited_opt :opaque, false } do
+  def require!(*args)
+    super unless opt :opaque
   end
 end

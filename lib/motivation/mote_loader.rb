@@ -4,8 +4,16 @@ module Motivation
       @container = container
     end
 
+    def load_string(str)
+      instance_eval str
+    end
+
     def require(motefile)
       instance_eval File.read(motefile), motefile
+    end
+
+    def eval(&block)
+      instance_eval &block
     end
 
     def motivation(*args)
@@ -14,7 +22,7 @@ module Motivation
 
     def method_missing(*args, &block)
       if block_given?
-        @container.container! *args, &block
+        MoteLoader.new(@container.container! *args).eval &block
       else
         @container.mote! *args, &block
       end

@@ -1,6 +1,12 @@
-Motivation.motive! instantiated: lambda { inherited_opt :instantiated, 'new' } do
+Motivation.motive! :instantiated, instantiated: lambda { inherited_opt :instantiated, 'new' } do
+  def resolve!
+    return constant unless opt :instantiated
+    instantiate!
+  end
+
   def instantiate!
-    return constant unless instantiated
-    instantiate_factory!.send instantiated, instantiate_dependencies!
+    factory = require_method :resolve_factory!, from: 'Instantiated#instantiate!'
+    dependencies = require_method :resolve_dependencies!, from: 'Instantiated#instantiate!'
+    factory.send opt(:instantiated), dependencies
   end
 end

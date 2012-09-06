@@ -1,44 +1,6 @@
 require 'spec_helper'
 
 describe Motivation::Container do
-  context "with arbitrary opts" do
-    subject do
-      described_class.new foo: 'bar'
-    end
-
-    it "makes opts available" do
-      subject.opts.should == { foo: 'bar' }
-    end
-
-    context "within a parent container with arbitrary opts" do
-      let :parent do
-        described_class.new foo: 'bar'
-      end
-
-      subject do
-        described_class.new parent, iphone: 'rox'
-      end
-
-      it "combines opts with parent opts" do
-        subject.opts.should == { foo: 'bar', iphone: 'rox' }
-      end
-    end
-  end
-
-  context "within a parent container with arbitrary opts" do
-    let :parent do
-      described_class.new foo: 'bar'
-    end
-
-    subject do
-      described_class.new parent
-    end
-
-    it "makes parent opts available as args" do
-      subject.opts.should == { foo: 'bar' }
-    end
-  end
-
   context "with a motive" do
     let :motive do
       Motivation::Motive.new motive_opt: 'mo modules mo opts' do
@@ -53,7 +15,7 @@ describe Motivation::Container do
     end
 
     it "includes its opt" do
-      subject.motive_opt.should == 'mo modules mo opts'
+      subject.opt(:motive_opt).should == 'mo modules mo opts'
     end
 
     it "includes its methods" do
@@ -61,14 +23,13 @@ describe Motivation::Container do
     end
 
     it "passes on its motives" do
-      subject.container!('my_sub_container')
-      subject.container('my_sub_container').motives.should == [motive]
+      subject.container!('my_sub_container').motives.should == [motive]
     end
   end
 
   describe "declaring a sub-container" do
     it "makes a new container" do
-      subject.container!('my_sub_container').should == Motivation::Container.new(subject, name: 'my_sub_container')
+      subject.container!('my_sub_container').should == Motivation::Container.new(name: 'my_sub_container', parent: subject)
     end
 
     it "makes this container its parent" do
@@ -77,18 +38,18 @@ describe Motivation::Container do
 
     it "stores the sub-container" do
       subject.container!('my_sub_container')
-      subject.containers.should == [Motivation::Container.new(subject, name: 'my_sub_container')]
+      subject.containers.should == [Motivation::Container.new(name: 'my_sub_container', parent: subject)]
     end
 
     it "makes the sub-container available by name" do
       subject.container!('my_sub_container')
-      subject.container('my_sub_container').should == Motivation::Container.new(subject, name: 'my_sub_container')
+      subject.container('my_sub_container').should == Motivation::Container.new(name: 'my_sub_container', parent: subject)
     end
   end
 
   describe "declaring a mote" do
     it "makes a new mote" do
-      subject.mote!('my_mote').should == Motivation::Mote.new(subject, name: 'my_mote')
+      subject.mote!('my_mote').should == Motivation::Mote.new(name: 'my_mote', parent: subject)
     end
 
     it "makes this container its parent" do
@@ -97,17 +58,7 @@ describe Motivation::Container do
 
     it "stores the mote" do
       subject.mote! 'my_mote'
-      subject.motes.should == [Motivation::Mote.new(subject, name: 'my_mote')]
-    end
-
-    context "when this container has opts" do
-      subject do
-        described_class.new foo: 'bar'
-      end
-
-      it "combines the mote opts with those of this container" do
-        subject.mote!('my_mote', power: 'rangers').should == Motivation::Mote.new(subject, foo: 'bar', name: 'my_mote', power: 'rangers')
-      end
+      subject.motes.should == { my_mote: Motivation::Mote.new(name: 'my_mote', parent: subject) }
     end
   end
 end

@@ -1,5 +1,5 @@
-Motivation.motive! factory: lambda { inherited_opt :factory, "#{name}_factory" } do
-  def instantiate_factory!
-    mote(factory).instantiate!
+Motivation.motive! :factory, factory: lambda { "#{name}_factory" } do
+  def resolve_factory!
+    resolve_mote! opt(:factory)
   end
 end

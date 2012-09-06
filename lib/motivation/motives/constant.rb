@@ -1,6 +1,13 @@
-Motivation.motive! constant: lambda { } do
+Motivation.motive! :constant, constant_name: lambda { name.camelize :upper } do
+  def constant_name
+    opt(:constant_name).to_s
+  end
+
   def constant
-    raise_unless_opt :constant_name
-    opt(:constant_name).constantize
+    constant_name.safe_constantize
+  end
+
+  def resolve!(*args)
+    constant._? { super }
   end
 end

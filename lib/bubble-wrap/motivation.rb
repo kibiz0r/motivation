@@ -1,7 +1,8 @@
 require 'bubble-wrap/loader'
+require 'bubble-wrap/coalesce'
+require 'motion_support/all'
 
 BubbleWrap.require 'lib/motivation/**/*.rb' do
-  # file('lib/motivation/foo.rb').depends_on 'lib/motivation/bar.rb'
-  file('lib/motivation/container.rb').depends_on 'lib/motivation/mote_like.rb'
-  file('lib/motivation/mote.rb').depends_on 'lib/motivation/mote_like.rb'
+  file('lib/motivation/class_ext.rb').depends_on 'lib/motivation/constructor.rb'
+  file('lib/motivation/locators/factory.rb').depends_on 'lib/motivation/motivation.rb'
 end

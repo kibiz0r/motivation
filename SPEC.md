@@ -237,3 +237,5 @@ You can return anything from a resolver.
 	resolver /(.*)!$/ do |name, *args|
 		mote(name).instantiate *args
 	end
+
+Motivation.main!

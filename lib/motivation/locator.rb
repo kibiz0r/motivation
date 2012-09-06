@@ -1,14 +1,14 @@
 module Motivation
-  class Resolver
+  class Locator
     def initialize(pattern, &block)
       @pattern = pattern
       @block = block
     end
 
-    def resolve!(name, *args)
+    def locate(context, name, *args)
       match = name.match @pattern
       if match
-        block.call *match.captures, *args
+        context.instance_exec *match.captures, *args, &@block
       end
     end
   end

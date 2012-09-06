@@ -1,16 +1,25 @@
 module Motivation
   class Mote
-    attr_reader :name
+    attr_reader :name, :parent, :motives, :context
 
     def initialize(*args)
       @opts = args.extract_options!
-      @name = @opts.delete(:name)._? ''
-      motives = @opts.delete(:motives)._? []
+      @name = @opts.delete(:name).to_s
+      @parent = @opts.delete(:parent)
+      @context = @opts.delete(:context)
+      @motives = @opts.delete(:motives)._? []
 
-      @motives = Hash[motives.map do |motive|
+      @motives.each do |motive|
         extend motive
-        [motive.opt_name.to_sym, motive]
-      end]
+      end
+    end
+
+    def is_mote?
+      true
+    end
+
+    def locate_mote(mote_name)
+      context.try :locate_mote, mote_name
     end
 
     def opt(opt_name)
@@ -18,12 +27,12 @@ module Motivation
     end
 
     def require_opt(opt_name, raise_opts = {})
-      raise_unless_opt opt_name, raise_opts
+      raise_unless_opt opt_name, raise_opts.merge(included_motives: motives, defined_motives: Motivation.motives)
       opt opt_name
     end
 
     def require_method(method_name, raise_opts = {})
-      raise_unless_method method_name, raise_opts
+      raise_unless_method method_name, raise_opts.merge(included_motives: motives, defined_motives: Motivation.motives)
       send method_name
     end
 
@@ -41,13 +50,57 @@ module Motivation
       raise MoteOptError.new opt_name, opts
     end
 
-    def resolve!
-      require_method :constant, from: 'Mote#resolve!'
+    def constant
+    end
+
+    def require!(*args)
+    end
+
+    def resolve!(*args)
+    end
+
+    def pseudo(opts)
+      default_opts = motive_opts.merge(specified_opts).merge(motives: motives, parent: parent, context: context)
+      Mote.new default_opts.merge(opts)
+    end
+
+    def resolve_mote!(mote, *args)
+      @context.resolve_mote! mote, *args
+    end
+
+    def inherited_opt(opt_name, default = nil)
+      parent.try(:opt, opt_name.to_sym)._? default
+    end
+
+    def mote(*args)
+      parent.try :mote, *args
+    end
+
+    def mote!(*args)
+      parent.try :mote!, *args
+    end
+
+    def ==(other)
+      other.is_a?(self.class) &&
+        self.name == other.name &&
+        self.parent.equal?(other.parent)
     end
 
     private
     def specified_opt(opt_name)
       @opts[opt_name.to_sym]
+    end
+
+    def specified_opts
+      @opts
+    end
+
+    def motive_opts
+      motives.inject({}) do |opts, motive|
+        opts.merge Hash[motive.opts.map do |opt_name|
+          [opt_name, motive.process_opt(self, opt_name)]
+        end]
+      end
     end
 
     def motive_opt(opt_name)
@@ -59,11 +112,11 @@ module Motivation
     end
 
     def motive?(opt_name)
-      @motives.has_key? opt_name.to_sym
+      !motive(opt_name).nil?
     end
 
     def motive(opt_name)
-      @motives[opt_name.to_sym]
+      @motives.detect { |m| m.opts.include? opt_name.to_sym }
     end
   end
 end
