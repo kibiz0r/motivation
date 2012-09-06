@@ -3,7 +3,7 @@ require File.expand_path('../lib/motivation/version', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.name          = 'motivation'
-  gem.description   = 'Motivation helps you define your object graph for DI and the RubyMotion build system while staying DRY'
+  gem.description   = 'Motivation helps you painlessly define your object graph for DI and the RubyMotion build system through convention'
   gem.homepage      = "https://github.com/kibiz0r/#{gem.name}"
   gem.version       = Motivation::VERSION
 
@@ -16,6 +16,8 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency 'bubble-wrap'
   gem.add_runtime_dependency 'motion_support'
   gem.add_runtime_dependency 'activesupport'
+  gem.add_runtime_dependency 'konjure'
+  gem.add_runtime_dependency 'coalesce'
   gem.add_development_dependency 'rspec'
   gem.add_development_dependency 'rr'
 

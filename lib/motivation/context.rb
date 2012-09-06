@@ -1,125 +1,52 @@
 module Motivation
-  class Context
-    DEFAULT_PATH_ROOT = 'lib'
-    DEFAULT_OPTS = { auto_scan: true }
+  class Context < Container
+    class << self
+      attr_accessor :current
+    end
 
-    include Motivation::ContextNode
+    attr_accessor :locators
 
-    attr_reader :path
-
-    def initialize(&block)
-      @motes = {}
-      @namespaces = {}
-      @instances = {}
-      motivation
-      Motivation::Context.current = self
-      if block_given?
-        Motivation::ContextLoader.new(self).instance_exec &block
-      end
+    def initialize(*args)
+      Context.current = self
+      opts = args.extract_options!
+      @locators = opts.delete(:locators)._? []
+      motives = opts.delete(:motives)._? []
+      super *args, opts
+      @motives = motives
+      @context = self
     end
 
     def motivation(*args)
-      @opts = DEFAULT_OPTS.merge args.extract_options!
-      @path = args[0] || DEFAULT_PATH_ROOT
-    end
-
-    def path_for(object)
-      mote(object).path
+      # opts = args.extract_options!
+      # path, _ = args
     end
 
     def files
-      motes.map &:path
+      motes.map { |_, m| m.require_method :file, from: "Context#files" }.compact
     end
 
-    def dependencies
-      {}
+    def file_dependencies
+      Hash[motes.map do |_, mote|
+        [mote.file, mote.required_mote_files] if mote.file
+      end]
     end
 
-    def allow_require?
-      true
-    end
-
-    def require
-      if allow_require?
-        @motes.each do |name, mote|
-          unless mote.motion
-            mote.require
-          end
-        end
-      end
-      self
-    end
-
-    def namespace!(name, opts = {}, &block)
-      namespace_opts = @opts.merge(name: name, path: File.join(path, name.to_s)).merge opts
-      @namespaces[name] = Motivation::Namespace.new(namespace_opts, &block).tap do |namespace|
-        namespace.motes.each do |mote|
-          add_mote mote
-        end
+    def locate_mote(mote_name, *args)
+      locators.inject(mote(mote_name)) do |located, locator|
+        located._? { locator.try :locate, self, mote_name, *args }
       end
     end
 
-    def mote!(name, *args)
-      # TODO: okay to override name?
-      opts = args.extract_options!
-      class_name = args[0] || name
-      mote_opts = @opts.merge(name: name, class_name: class_name, path: File.join(path, class_name.to_s)).merge opts
-      add_mote Motivation::Mote.new(mote_opts)
+    def namespace
+      ''
     end
 
-    def add_mote(mote)
-      @motes[mote.name.to_sym] = mote
-    end      
-
-    def namespaces
-      @namespaces.values
+    def require_mote(mote_name, *args)
+      locate_mote(mote_name, *args)._? { raise "No such mote '#{mote_name}' amongst #{motes.keys}" }
     end
 
-    def motes
-      @motes.values
-    end
-
-    def [](name)
-      mote(name).try :factory
-    end
-
-    def self.[](name)
-      current[name]
-    end
-
-    def instantiate(name)
-      if name.end_with? '_factory'
-        name = name.gsub(/_factory$/, '') unless self[name]
-        self[name]
-      else
-        return @instances[name.to_sym] if @instances[name.to_sym]
-        factory = self[name]
-
-        raise "no factory found for #{name}" unless factory
-
-        if factory.motivated_attrs.size > 0
-          filled_dependencies = Hash[factory.motivated_attrs.map do |dep|
-            [dep, instantiate(dep)]
-          end]
-          factory.new filled_dependencies
-        else
-          factory.new
-        end.tap { |i| @instances[name.to_sym] = i }
-      end
-    end
-
-    def self.instantiate(name)
-      current.instantiate name
-    end
-
-    def mote(name)
-      @motes[name.to_sym]
-    end
-
-    class << self
-      attr_accessor :current
-      def files; current.files; end
-      def dependencies; current.dependencies; end
+    def resolve_mote!(mote_name, *args)
+      require_mote(mote_name, *args).resolve! *args
     end
   end
 end

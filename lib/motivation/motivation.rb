@@ -1,25 +1,77 @@
 module Motivation
-  def self.require(motefile = './Motefile')
-    Motivation::Context.current = Motivation::ContextLoader.require motefile
-  end
+  class << self
+    def motives
+      @motives._? { @motives = [] }
+    end
 
-  def self.namespaces
-    Motivation::Context.current.namespaces
-  end
+    def locators
+      @locators._? { @locators = [] }
+    end
 
-  def self.motes
-    Motivation::Context.current.motes
-  end
+    def root
+      @root._? { @root = '.' }
+    end
 
-  def self.method_missing(mote, *args, &block)
-    mote = mote.to_s
-    instantiate = mote.end_with? '!'
-    mote = mote.gsub '!', ''
+    attr_writer :motives, :root
 
-    if instantiate
-      Motivation::Context.instantiate mote
-    else
-      Motivation::Context[mote]
+    def motive!(*args, &block)
+      motives << Motive.new(*args, &block)
+    end
+
+    def locator!(*args, &block)
+      locators << Locator.new(*args, &block)
+    end
+
+    def reset!
+      self.motives = nil
+      self.root = nil
+    end
+
+    def context!(opts = {})
+      default_opts = { motives: motives, locators: locators, path: root }
+      Context.new default_opts.merge(opts)
+    end
+
+    def files
+      Context.current.files
+    end
+
+    def file_dependencies
+      Context.current.file_dependencies
+    end
+
+    def method_missing(mote_name, *args, &block)
+      mote_name = mote_name.to_s
+      if mote_name.end_with? '!'
+        mote_name.chop!
+        Context.current.resolve_mote! mote_name, *args, &block
+      else
+        Context.current.locate_mote mote_name, *args, &block
+      end
+    end
+
+    def require(motefile = 'Motefile')
+      MoteLoader.new(context!(name: motefile)).require motefile
+    end
+
+    def load_string(str)
+      MoteLoader.new(context!).load_string str
+    end
+
+    def motion!
+      File.open 'Motefile.motion', 'w' do |motion_file|
+        motion_file.puts 'Motivation::Motion.new do'
+        File.read('Motefile').each_line do |line|
+          motion_file.puts "  #{line}"
+        end
+        motion_file.puts 'end'
+      end
+      Motion::Project::App.setup do |app|
+        app.files += self.files
+        app.files << './Motefile.motion'
+        app.files_dependencies self.file_dependencies
+      end
     end
   end
 end
+

@@ -1,3 +1,3 @@
 class Class
-  include Motivation::Constructor
+  include ::Motivation::Constructor
 end
