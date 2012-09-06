@@ -7,6 +7,10 @@ Motivation.motive! :instantiated, instantiated: lambda { inherited_opt :instanti
   def instantiate!
     factory = require_method :resolve_factory!, from: 'Instantiated#instantiate!'
     dependencies = require_method :resolve_dependencies!, from: 'Instantiated#instantiate!'
-    factory.send opt(:instantiated), dependencies
+    if dependencies.empty?
+      factory.send opt(:instantiated)
+    else
+      factory.send opt(:instantiated), dependencies
+    end
   end
 end

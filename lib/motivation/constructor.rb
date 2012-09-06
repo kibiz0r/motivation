@@ -7,11 +7,7 @@ module Motivation
         @motivated_attr_map[dependency] = dependency
       end
 
-      define_method :initialize do |args|
-        self.class.motivated_attr_map.each do |ivar_name, dependency_name|
-          instance_variable_set :"@#{ivar_name}", args[dependency_name]
-        end
-      end
+      include Motivate
     end
 
     def motivated_attr_map
@@ -19,7 +15,21 @@ module Motivation
     end
 
     def motivated_attrs
-      motivated_attr_map.values
+      motivated_attr_map.keys
+    end
+  end
+
+  module Motivate
+    def motivate!(*args, &block)
+      opts = args.extract_options!
+      self.class.motivated_attr_map.each do |dependency_name, ivar_name|
+        instance_variable_set :"@#{ivar_name}", opts[dependency_name]
+      end
+    end
+
+    def initialize(*args, &block)
+      motivate! *args, &block
+      super if defined?(super) && self.class.superclass != Object
     end
   end
 end
