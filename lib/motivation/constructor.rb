@@ -11,7 +11,8 @@ module Motivation
     end
 
     def motivated_attr_map
-      @motivated_attr_map ||= {}
+      super_attrs = superclass.try(:motivated_attr_map)._?({})
+      super_attrs.merge(@motivated_attr_map ||= {})
     end
 
     def motivated_attrs
