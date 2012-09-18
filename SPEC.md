@@ -239,3 +239,25 @@ You can return anything from a resolver.
 	end
 
 Motivation.main!
+
+## Awesome stuff
+
+### Specify what tests cover what sources
+
+    foo spec_dir: 'spec/units', spec: 'foo_spec'
+
+    interactors spec_dir: 'spec/interactors', feature_dir: 'features' do
+      log_in_interactor spec: 'log_in_interactor_spec', feature: 'log_in.feature'
+      # So, the specs don't mean much since they should be unit tests and mock out their dependencies,
+      # but the feature means a lot because it's an integration test
+      # Note that this implies something very powerful:
+      # When any dependencies of LogInInteractor change, this specific feature is the one that you ought to run
+    end
+
+So, knowing the spec associated with a mote doesn't really help you much since you could already guess the unit test associated with a class. But knowing the feature is very helpful. Most people's integration tests are too slow, they don't give a tight enough feedback loop to really do TDD.
+
+But provided your integration tests can run quickly -- and why wouldn't they? --  you can stay in the zone more often with more information at your disposal, re-running integration tests automatically based on dependencies whenever you make a single line-change in a file that impacts it. Now that's powerful.
+
+### Test everything that might be broken based on what's dirty in git st
+
+rake motivation:smoke
