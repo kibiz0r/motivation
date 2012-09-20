@@ -1,5 +1,7 @@
 module Motivation
   class MoteLoader
+    undef :display
+
     def initialize(container)
       @container = container
     end
