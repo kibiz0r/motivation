@@ -2,15 +2,13 @@ module Motivation
   module Constructor
     def constructor(*dependencies)
       @motivated_attr_map = dependencies.extract_options!
+
       until dependencies.empty?
         dependency = dependencies.shift
         @motivated_attr_map[dependency] = dependency
       end
 
-      def initialize(*args, &block)
-        motivate! *args, &block
-        super if defined?(super) && self.class.superclass != Object
-      end
+      include Motivation::Motivate
     end
 
     def motivated_attr_map
