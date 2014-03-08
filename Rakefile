@@ -1,6 +1,6 @@
 #!/usr/bin/env rake
 $:.unshift('/Library/RubyMotion/lib')
-require 'motion/project'
+require 'motion/project/template/ios'
 require 'bundler'
 Bundler.require
 require 'rspec/core/rake_task'

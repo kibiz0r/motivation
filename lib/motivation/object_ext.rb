@@ -1,3 +1,3 @@
-class Object
-  include ::Motivation::Motivate
-end
+# class Object
+#   include ::Motivation::Motivate
+# end

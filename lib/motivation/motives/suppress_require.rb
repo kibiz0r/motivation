@@ -1,4 +1,4 @@
-Motivation::Motive.new :suppress_require do
-  def require!
-  end
-end
+# Motivation::Motive.new :suppress_require do
+#   def require!
+#   end
+# end
