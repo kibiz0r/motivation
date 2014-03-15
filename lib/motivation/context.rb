@@ -1,52 +1,45 @@
-# module Motivation
-#   class Context < Container
-#     class << self
-#       attr_accessor :current
-#     end
-# 
-#     attr_accessor :locators
-# 
-#     def initialize(*args)
-#       Context.current = self
-#       opts = args.extract_options!
-#       @locators = opts.delete(:locators)._? []
-#       motives = opts.delete(:motives)._? []
-#       super *args, opts
-#       @motives = motives
-#       @context = self
-#     end
-# 
-#     def motivation(*args)
-#       # opts = args.extract_options!
-#       # path, _ = args
-#     end
-# 
-#     def files
-#       motes.map { |_, m| m.require_method :file, from: "Context#files" }.compact
-#     end
-# 
-#     def file_dependencies
-#       Hash[motes.map do |_, mote|
-#         [mote.file, mote.required_mote_files] if mote.file
-#       end]
-#     end
-# 
-#     def locate_mote(mote_name, *args)
-#       locators.inject(mote(mote_name)) do |located, locator|
-#         located._? { locator.try :locate, self, mote_name, *args }
-#       end
-#     end
-# 
-#     def namespace
-#       ''
-#     end
-# 
-#     def require_mote(mote_name, *args)
-#       locate_mote(mote_name, *args)._? { raise "No such mote '#{mote_name}' amongst #{motes.keys}" }
-#     end
-# 
-#     def resolve_mote!(mote_name, *args)
-#       require_mote(mote_name, *args).resolve! *args
-#     end
-#   end
-# end
+module Motivation
+  class Context
+    attr_reader :motivator, :definition
+
+    def initialize(motivator, definition)
+      @motivator = motivator
+      @definition = definition
+      @motes = {}
+    end
+
+    def resolve_mote_definition(mote_definition, *motives)
+      motivator.resolve_mote_definition self, mote_definition, *motives
+    end
+
+    def resolve_mote_reference(mote_reference)
+      name = mote_reference.name
+      mote = self[name]
+      return mote if mote
+      raise "No such mote: #{mote_reference} motes: #{@motes}"
+    end
+
+    def resolve_motive_reference(motive_reference)
+      motivator.resolve_motive_reference motive_reference
+    end
+
+    def [](name)
+      name = name.to_sym
+
+      return @motes[name] if @motes.has_key? name
+
+      mote_definition = definition.motes.find do |mote|
+        mote.name == name
+      end
+
+      # TODO: Check for ambiguous mote_definition
+
+      motives = mote_definition.motives.map do |motive_reference|
+        resolve_motive_reference motive_reference
+      end
+      resolve_mote_definition(mote_definition, *motives).tap do |mote|
+        @motes[name] = mote
+      end
+    end
+  end
+end

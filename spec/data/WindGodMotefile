@@ -1,0 +1,45 @@
+project.wind_god naming: "underscores" do # makes certain default motives available, can customize naming convention
+  opaque.foo
+  namespace("WindGod").wind_god_namespace
+  # self is a MoteLoader, which knows to just return a RequiresMotive instantiated by the Container
+  # app_delegate requires("cocos2d")
+  # # app_delegate is a Mote, which applies a new RequiresMotive instantiated by the Container
+  # app_delegate.requires("cocos2d")
+  # requires "cocos2d" do
+  #   # makes the RequiresMotive a Container, which allows it to apply itself to Motes defined within
+  # end
+  # requires("cocos2d").and.namespace("cc") do # explicit and is allowed, can also do: requires().and(namespace())
+  # end
+  # # dir "app" do # explicitly makes an anonymous Mote with a DirMotive, which is then used as a container
+  # dir.app do # saying dir.app actually names this mote "app" as opposed to just making it a container
+  #            # because of how the DirMotive defaults to the name of the mote it is attached to, they are equivalent,
+  #            # except that motivation.app or motivation[:app] will return this Mote
+  #   app_delegate.needs window
+  #   app_delegate.needs window
+  #   app_delegate.needs window: window
+  #   app_delegate.class("AppDelegate").file("app_delegate").filepath("app/app_delegate.rb")
+  #   my_app_delegate app_delegate # alias
+  #   my_app_delegate.alias app_delegate # explicit alias
+  #   my_app_delegate.requires "whatever" # customization to an alias mote only affects itself
+  #   awesome_logger logger,
+  #     impl: awesome
+  #   robot.needs(
+  #     right_leg: right_leg,
+  #     left_leg: left_leg,
+  #     head: robot_head
+  #   )
+  #   right_leg.needs leg,
+  #     foot: right_foot
+  #   left_leg.needs leg,
+  #     foot: left_foot
+  #   robot.needs(
+  #     right_leg: leg.with.needs(foot: right_foot), # .with returns an anonymous Mote based on another Mote
+  #     left_leg: leg.with.needs(foot: left_foot),
+  #     head: robot_head
+  #   )
+  # end
+  # context.my_subcontext do
+  #   in_subcontext
+  # end
+end
+

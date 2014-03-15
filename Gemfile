@@ -1,9 +1,11 @@
 source :rubygems
 
-group :cucumber do
-  gem 'frank-cucumber'
-end
+# group :cucumber do
+#   gem 'frank-cucumber'
+# end
 
-gem 'coalesce', github: 'kibiz0r/coalesce'
+gem "rake"
+gem "coalesce", github: "kibiz0r/coalesce"
+# gem "motion-frank", "~> 1.2.2.0"
 
 gemspec
