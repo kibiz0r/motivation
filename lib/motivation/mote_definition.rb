@@ -2,14 +2,13 @@ module Motivation
   class MoteDefinition
     include MoteDsl
 
-    attr_reader :context, :name, :motives
+    attr_reader :parent, :name, :motives
 
-    def initialize(context, name, *motives)
-      @context = context
+    def initialize(parent, name, *motives)
+      @parent = parent
       @name = name.to_sym
       @motives = motives.extract_options!
       motives.each do |motive|
-        # puts motive.to_s
         if @motives.has_key? motive.name
           multiple = [@motives[motive.name], motive]
           raise "Multiple motives with name \"#{motive.name}\": #{multiple.join ", "}"
@@ -19,13 +18,16 @@ module Motivation
     end
 
     def to_s
-      parts = [":#{name}", motives.map { |kv| kv.map(&:to_s).join ": " }.join(", ")].reject &:blank?
-      "#mote!(#{parts.join ", "})"
+      parts = [
+        ":#{name}",
+        motives.map { |kv| kv.map(&:to_s).join ": " }.join(", ")
+      ].reject &:blank?
+      "#{parent}.mote!(#{parts.join ", "})"
     end
 
     def ==(other)
       other.is_a?(MoteDefinition) &&
-        self.context == other.context &&
+        self.parent == other.parent &&
         self.name == other.name &&
         self.motives == other.motives
     end
@@ -48,7 +50,7 @@ module Motivation
     end
 
     def mote(name)
-      raise "Cannot get a mote reference from a mote definition (did you mean to reference a motive?)"
+      raise "Cannot get a mote reference (\"#{name}\") from a mote definition (did you mean to reference a motive?)"
     end
   end
 end

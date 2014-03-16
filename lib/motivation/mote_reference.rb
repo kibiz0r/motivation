@@ -1,19 +1,21 @@
 module Motivation
   class MoteReference
-    attr_reader :context, :name
+    include MoteDsl
 
-    def initialize(context, name)
-      @context = context
+    attr_reader :parent, :name
+
+    def initialize(parent, name)
+      @parent = parent
       @name = name.to_sym
     end
 
     def to_s
-      "#mote(:#{name})"
+      ".mote(:#{name})"
     end
 
     def ==(other)
       other.is_a?(MoteReference) &&
-        self.context == other.context &&
+        self.parent == other.parent &&
         self.name == other.name
     end
   end

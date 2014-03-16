@@ -2,17 +2,20 @@ module Motivation
   class MotiveReference
     include MoteDsl
 
-    attr_reader :context, :name, :args
+    attr_reader :parent, :name, :args
 
-    def initialize(context, name, *args)
-      @context = context
+    def initialize(parent, name, *args)
+      @parent = parent
       @name = name.to_sym
       @args = args
     end
 
     def to_s
-      parts = [":#{name}", args.map(&:to_s).join(", ")].reject &:blank?
-      "#motive(#{parts.join ", "})"
+      parts = [
+        ":#{name}",
+        args.map(&:to_s).join(", ")
+      ].reject &:blank?
+      "#{parent}.motive(#{parts.join ", "})"
     end
 
     def ==(other)

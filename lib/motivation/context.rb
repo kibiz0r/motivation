@@ -23,6 +23,10 @@ module Motivation
       motivator.resolve_motive_reference motive_reference
     end
 
+    def context
+      self
+    end
+
     def [](name)
       name = name.to_sym
 

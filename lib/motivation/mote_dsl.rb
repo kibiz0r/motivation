@@ -3,41 +3,59 @@ module Motivation
     extend Forwardable
 
     DELEGATED_TO_CONTEXT = %w|
-      mote!
-      mote
-      motive
       motive_defined?
       add_mote_definition
-      eval_mote_block
-      eval_motive_block
     |.map &:to_sym
-    def_delegators :delegate_to_context, *DELEGATED_TO_CONTEXT
+    def_delegators :context, *DELEGATED_TO_CONTEXT
 
     def eval(&block)
       instance_eval &block
     end
 
-    def delegate_to_context
-      raise "#{self.class} must implement #context or override #{DELEGATED_TO_CONTEXT.join ", "}" unless self.respond_to? :context
-      context
+    def context
+      unless self.respond_to? :parent
+        raise "#{self.class} must implement #context or #parent"
+      end
+      self.parent.context
+    end
+
+    def mote!(name, *motives)
+      MoteDefinition.new self, name, *motives
+    end
+
+    def mote(name, *motives)
+      MoteReference.new self, name, *motives
+    end
+
+    def motive(name, *args)
+      MotiveReference.new self, name, *args
+    end
+
+    def eval_mote_block(mote, &block)
+      MoteBlock.new(self, mote).eval &block
+    end
+
+    def eval_motive_block(motive, &block)
+      MotiveBlock.new(self, motive).eval &block
     end
 
     def method_missing(name, *args, &block)
       name = name.to_s
       if name.end_with? "!"
-        mote!(name.chop, *args).tap do |mote|
-          add_mote_definition mote
-          eval_mote_block mote, &block if block_given?
+        self.mote!(name.chop, *args).tap do |mote|
+          self.add_mote_definition mote
+          self.eval_mote_block mote, &block if block_given?
         end
-      elsif motive_defined?(name)
-        motive(name, *args).tap do |motive|
-          eval_motive_block motive, &block if block_given?
+      elsif self.motive_defined?(name)
+        self.motive(name, *args).tap do |motive|
+          self.eval_motive_block motive, &block if block_given?
         end
       else
-        mote name, *args
+        self.mote name, *args
       end
     rescue => e
-      raise "problem handling #{self}.#{name}: #{e}"
+      # puts "problem handling #{self}.#{name}: #{e}"
+      super name.to_sym, *args, &block
     end
   end
 end

@@ -45,7 +45,10 @@ describe ContextDefinition do
           two_mote!
         end
       end
-      expect(subject.motes).to eq([mote_definition(:one_mote), mote_definition(:two_mote)])
+      one_mote = mote_definition(:one_mote)
+      two_mote = mote_definition(:two_mote)
+      two_mote.instance_variable_set :@parent, one_mote
+      expect(subject.motes).to eq([one_mote, two_mote])
     end
   end
 
@@ -70,7 +73,11 @@ describe ContextDefinition do
           foo_mote!
         end
       end
-      expect(subject.motes).to eq([mote_definition(:foo_mote, motive_reference(:foo_motive))])
+      # expect(subject.motes).to eq([mote_definition(:foo_mote, motive_reference(:foo_motive))])
+      motive = motive_reference(:foo_motive)
+      mote = mote_definition(:foo_mote)
+      mote.instance_variable_set :@parent, motive
+      expect(subject.motes).to eq([mote])
     end
 
     it "applies motive references inside motive blocks" do
@@ -79,7 +86,10 @@ describe ContextDefinition do
           foo_mote! bar_motive
         end
       end
-      expect(subject.motes).to eq([mote_definition(:foo_mote, motive_reference(:bar_motive), motive_reference(:foo_motive))])
+      motive = motive_reference(:foo_motive)
+      mote = mote_definition(:foo_mote, motive_reference(:bar_motive))
+      mote.instance_variable_set :@parent, motive
+      expect(subject.motes).to eq([mote])
     end
 
     it "applies arguments to motive references" do
@@ -88,7 +98,10 @@ describe ContextDefinition do
           bar_mote!
         end
       end
-      expect(subject.motes).to eq([mote_definition(:bar_mote, motive_reference(:bar_motive, mote_reference(:baz_mote)))])
+      motive = motive_reference(:bar_motive, mote_reference(:baz_mote))
+      mote = mote_definition(:bar_mote)
+      mote.instance_variable_set :@parent, motive
+      expect(subject.motes).to eq([mote])
     end
 
     it "lets you say foo_motive.foo_mote!" do

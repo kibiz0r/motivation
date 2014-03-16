@@ -2,16 +2,15 @@ module Motivation
   class MotiveBlock
     include MoteDsl
 
-    attr_reader :context
+    attr_reader :parent
 
-    def initialize(context, motive)
-      @context = context
+    def initialize(parent, motive)
+      @parent = parent
       @motive = motive
     end
 
     def mote!(name, *motives)
-      puts "context.mote! #{name}, #{(motives + [@motive]).map(&:to_s).join ", "}"
-      context.mote! name, *(motives + [@motive])
+      MoteDefinition.new @motive, name, *motives
     end
   end
 end

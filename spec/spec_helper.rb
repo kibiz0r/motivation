@@ -38,7 +38,7 @@ def test_module(name, &block)
     Module.new.tap do |mod|
       block.call mod
       const_name = name.to_s.camelize
-      Kernel.const_reset const_name, mod
+      Object.const_reset const_name, mod
     end
   end
 end

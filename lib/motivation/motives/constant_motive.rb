@@ -6,10 +6,11 @@ module Motivation
       end
 
       def resolve(mote)
-        namespace = if mote.respond_to? :namespace
-                      mote.namespace.name.demodulize
-                    end
-        mote.require_source_const [namespace, @constant].compact.join("::")
+        # namespace = if mote.respond_to? :namespace
+        #               mote.namespace.name.demodulize
+        #             end
+        # mote.require_source_const [namespace, @constant].compact.join("::")
+        mote.require_source_const @constant
       end
     end
   end
