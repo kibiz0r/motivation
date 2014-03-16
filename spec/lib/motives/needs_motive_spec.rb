@@ -1,15 +1,13 @@
 require "spec_helper"
 
 describe NeedsMotive do
-  let :my_module do
-    MyModule = Module.new.tap do |mod|
-      mod::MyDep = Class.new
-      mod::MyClass = Class.new do
-        attr_reader :dep
+  test_module :my_module do |mod|
+    mod::MyDep = Class.new
+    mod::MyClass = Class.new do
+      attr_reader :dep
 
-        def initialize(dep)
-          @dep = dep
-        end
+      def initialize(dep)
+        @dep = dep
       end
     end
   end

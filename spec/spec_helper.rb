@@ -25,3 +25,20 @@ end
 def motive_reference(name, *args)
   MotiveReference.new context_definition, name, *args
 end
+
+class Module
+  def const_reset(name, value)
+    remove_const name if const_defined? name
+    const_set name, value
+  end
+end
+
+def test_module(name, &block)
+  let name do
+    Module.new.tap do |mod|
+      block.call mod
+      const_name = name.to_s.camelize
+      Kernel.const_reset const_name, mod
+    end
+  end
+end

@@ -1,11 +1,9 @@
 require "spec_helper"
 
 describe NamespaceMotive do
-  let :my_module do
-    MyModule = Module.new.tap do |mod|
-      mod::MyNamespace = Module.new.tap do |namespace|
-        namespace::MyClass = Class.new
-      end
+  test_module :my_module do |mod|
+    mod::MyNamespace = Module.new.tap do |namespace|
+      namespace::MyClass = Class.new
     end
   end
 
@@ -36,12 +34,10 @@ describe NamespaceMotive do
   end
 
   context "with multiple namespaces" do
-    let :my_module do
-      MyModule = Module.new.tap do |mod|
-        mod::ParentNamespace = Module.new.tap do |parent|
-          parent::MyNamespace = Module.new.tap do |namespace|
-            namespace::MyClass = Class.new
-          end
+    test_module :my_module do |mod|
+      mod::ParentNamespace = Module.new.tap do |parent|
+        parent::MyNamespace = Module.new.tap do |namespace|
+          namespace::MyClass = Class.new
         end
       end
     end

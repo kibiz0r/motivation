@@ -1,10 +1,8 @@
 require "spec_helper"
 
 describe Motivator do
-  let :my_module do
-    MyModule = Module.new.tap do |mod|
-      mod::AwesomeMotive = Class.new
-    end
+  test_module :my_module do |mod|
+    mod::AwesomeMotive = Class.new
   end
 
   let :awesome_motive do
