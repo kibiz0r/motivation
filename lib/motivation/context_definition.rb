@@ -4,7 +4,7 @@ module Motivation
     extend Forwardable
 
     attr_reader :motes, :motivator
-    def_delegators :motivator, :has_motive?
+    def_delegators :motivator, :motive_defined?
 
     def initialize(motivator)
       @motivator = motivator

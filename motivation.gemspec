@@ -17,7 +17,8 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "motion-support", "~> 0.2.6"
   gem.add_runtime_dependency "activesupport"
   gem.add_runtime_dependency "coalesce"
-  gem.add_development_dependency "rspec"
+  gem.add_development_dependency "rspec-core"
+  gem.add_development_dependency "rspec-expectations"
   gem.add_development_dependency "rr"
   gem.add_development_dependency "pry"
 

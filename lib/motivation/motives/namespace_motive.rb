@@ -5,8 +5,8 @@ module Motivation
         @namespace = namespace
       end
 
-      def namespace(mote)
-        @namespace.camelize
+      def resolve(mote)
+        mote.require_source_const @namespace
       end
     end
   end

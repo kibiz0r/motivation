@@ -7,7 +7,11 @@ module Motivation
     end
 
     def name
-      self.class.name.demodulize.underscore
+      class_name = self.class.name
+      unless class_name
+        raise "Motives must be constants or explicitly implement #name"
+      end
+      class_name.demodulize.underscore.sub(/Motive$/, "").to_sym
     end
 
     def ==(other)

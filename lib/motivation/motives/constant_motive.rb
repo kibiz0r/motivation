@@ -5,9 +5,9 @@ module Motivation
         @constant = constant
       end
 
-      def constant(mote)
+      def resolve(mote)
         namespace = if mote.respond_to? :namespace
-                      mote.namespace
+                      mote.namespace.name.demodulize
                     end
         mote.require_source_const [namespace, @constant].compact.join("::")
       end

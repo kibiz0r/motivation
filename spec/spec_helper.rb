@@ -1,8 +1,5 @@
 require "bundler"
 Bundler.require :default, :test, :development
-$LOAD_PATH << Dir.pwd
-require "rspec"
-require "active_support/all"
 require "motivation"
 Dir["./spec/support/**/*.rb"].each { |f| require f }
 

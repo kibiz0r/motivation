@@ -5,7 +5,7 @@ module Motivation
         @needs = needs
       end
 
-      def needs(mote)
+      def resolve(mote)
         @needs
       end
     end

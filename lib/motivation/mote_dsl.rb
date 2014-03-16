@@ -6,7 +6,7 @@ module Motivation
       mote!
       mote
       motive
-      has_motive?
+      motive_defined?
       add_mote_definition
       eval_mote_block
       eval_motive_block
@@ -29,7 +29,7 @@ module Motivation
           add_mote_definition mote
           eval_mote_block mote, &block if block_given?
         end
-      elsif has_motive?(name)
+      elsif motive_defined?(name)
         motive(name, *args).tap do |motive|
           eval_motive_block motive, &block if block_given?
         end

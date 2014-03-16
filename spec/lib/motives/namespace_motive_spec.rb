@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe NamespaceMotive do
   let :my_module do
-    Module.new.tap do |mod|
+    MyModule = Module.new.tap do |mod|
       mod::MyNamespace = Module.new.tap do |namespace|
         namespace::MyClass = Class.new
       end
@@ -10,8 +10,8 @@ describe NamespaceMotive do
   end
 
   let :context do
-    Motivator.new(Motivation, ConstantMotive, NamespaceMotive, my_module).eval do
-      my_mote!.namespace("MyNamespace").constant("MyClass")
+    Motivator.new(Motivation, NamespaceMotive, my_module).eval do
+      my_mote!.namespace("MyNamespace")
     end
   end
 
@@ -19,7 +19,43 @@ describe NamespaceMotive do
     context[:my_mote]
   end
 
-  it "does stuff" do
-    expect(subject.constant).to eq(my_module::MyNamespace::MyClass)
+  it "resolves a namespace" do
+    expect(subject.namespace).to eq(my_module::MyNamespace)
+  end
+
+  context "with a constant" do
+    let :context do
+      Motivator.new(Motivation, ConstantMotive, NamespaceMotive, my_module).eval do
+        my_mote!.namespace("MyNamespace").constant("MyClass")
+      end
+    end
+
+    it "resolves a constant" do
+      expect(subject.constant).to eq(my_module::MyNamespace::MyClass)
+    end
+  end
+
+  context "with multiple namespaces" do
+    let :my_module do
+      MyModule = Module.new.tap do |mod|
+        mod::ParentNamespace = Module.new.tap do |parent|
+          parent::MyNamespace = Module.new.tap do |namespace|
+            namespace::MyClass = Class.new
+          end
+        end
+      end
+    end
+
+    let :context do
+      Motivator.new(Motivation, NamespaceMotive, my_module).eval do
+        namespace "ParentNamespace" do
+          my_mote!.namespace "MyNamespace"
+        end
+      end
+    end
+
+    it "resolves multiple namespaces" do
+      expect(subject.namespace).to eq(my_module::ParentNamespace::MyNamespace)
+    end
   end
 end

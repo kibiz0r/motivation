@@ -34,10 +34,10 @@ module Motivation
 
       # TODO: Check for ambiguous mote_definition
 
-      motives = mote_definition.motives.map do |motive_reference|
-        resolve_motive_reference motive_reference
-      end
-      resolve_mote_definition(mote_definition, *motives).tap do |mote|
+      # motives = mote_definition.motives.map do |motive_reference|
+      #   resolve_motive_reference motive_reference
+      # end
+      resolve_mote_definition(mote_definition).tap do |mote|
         @motes[name] = mote
       end
     end

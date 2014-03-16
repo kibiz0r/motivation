@@ -1,7 +1,7 @@
 module Motivation
-  class Motion < Context
-    def initialize(&block)
-      eval &block
+  class Motion
+    def initialize(filename, &block)
+      Motivation.context = Motivator.new(Motivation, Motivation::Motives).eval &block
     end
     # def initialize(*args, &block)
     #   super motives: (Motivation.motives + [Motivation::Motives::SuppressRequire]),

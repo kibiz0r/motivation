@@ -10,6 +10,7 @@ module Motivation
     end
 
     def mote!(name, *motives)
+      puts "context.mote! #{name}, #{(motives + [@motive]).map(&:to_s).join ", "}"
       context.mote! name, *(motives + [@motive])
     end
   end

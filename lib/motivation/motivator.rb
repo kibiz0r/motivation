@@ -51,11 +51,11 @@ module Motivation
       end
     end
 
-    def has_motive?(name)
+    def motive_defined?(name)
       !source_const("#{name.to_s.camelize}Motive").nil?
     end
 
-    def find_motive(name)
+    def motive_definition(name)
       require_source_const "#{name.to_s.camelize}Motive"
     end
 

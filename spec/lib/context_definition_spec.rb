@@ -26,7 +26,7 @@ describe ContextDefinition do
   context "without any motives" do
     let :motivator do
       Object.new.tap do |object|
-        stub(object).has_motive? { false }
+        stub(object).motive_defined? { false }
       end
     end
 
@@ -52,10 +52,10 @@ describe ContextDefinition do
   context "with motives" do
     let :motivator do
       Object.new.tap do |object|
-        stub(object).has_motive? { false }
-        stub(object).has_motive?("foo_motive") { true }
-        stub(object).has_motive?("bar_motive") { true }
-        stub(object).has_motive?("baz_motive") { true }
+        stub(object).motive_defined? { false }
+        stub(object).motive_defined?("foo_motive") { true }
+        stub(object).motive_defined?("bar_motive") { true }
+        stub(object).motive_defined?("baz_motive") { true }
       end
     end
 
