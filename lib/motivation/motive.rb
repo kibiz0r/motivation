@@ -3,8 +3,9 @@ module Motivation
     attr_reader :parent
     attr_writer :args
 
-    def initialize(parent)
+    def initialize(parent, *args)
       @parent = parent
+      @args = args
     end
 
     def args

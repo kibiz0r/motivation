@@ -32,6 +32,12 @@ module Motivation
     end
 
     def resolve_motive_reference(motive_reference)
+      # TODO: Replace this with generic resolver
+      if motive_reference.name == :constant
+        if self[:namespace]
+          return self[:namespace].resolve_constant_motive_reference motive_reference
+        end
+      end
       self.motivator.motive_resolver.resolve_motive_reference self, motive_reference
       # self.motivator.resolve_motive_reference(motive_reference).resolve self
     end
@@ -40,7 +46,7 @@ module Motivation
       self.definition.motives.each_value do |motive_reference|
         motive = self.resolve_motive_reference motive_reference
         if motive.respond_to? :resolve_mote
-          return motive.resolve_mote self
+          return motive.resolve_mote
         end
       end
 
@@ -62,7 +68,8 @@ module Motivation
       if self.definition.motive? method
         # puts "self.definition.motive? method"
         # return self.resolve_motive_reference definition.motive(method)
-        return self.motivator.motive_resolver.resolve_motive_reference(self, definition.motive(method)).resolve
+        return self[method].resolve
+        # return self.motivator.motive_resolver.resolve_motive_reference(self, definition.motive(method)).resolve
       end
 
       if self.parent && self.parent.respond_to?(method)

@@ -12,16 +12,14 @@ module Motivation
         self.parent.require_source_const @namespace
       end
 
-      def resolve_mote(mote)
-        self.resolve
+      def resolve_mote
+        resolve
       end
 
-      def resolve_constant_motive(constant_motive)
-        self.resolve.const_get constant_motive.constant
-      end
-
-      def resolve_namespace_motive(namespace_motive)
-        self.resolve.const_get namespace_motive.namespace
+      def resolve_constant_motive_reference(motive_reference)
+        constant_name = motive_reference.args.first
+        constant = [self.namespace, constant_name].compact.join "::"
+        ConstantMotive.new self.parent, constant
       end
     end
   end

@@ -4,7 +4,7 @@ module Motivation
       attr_reader :constant
 
       def initialize(parent, constant)
-        super parent
+        super parent, constant
         @constant = constant
       end
 

@@ -52,8 +52,9 @@ describe NamespaceMotive do
     end
 
     it "resolves a constant" do
-      expect(context[:my_mote][:namespace].resolve_constant_motive(context[:my_mote][:constant])).to eq(my_module::MyNamespace::MyClass)
-      # FAILZ
+      expect(context[:my_mote][:constant].parent).to eq(context[:my_mote])
+      expect(context[:my_mote][:constant]).to eq(ConstantMotive.new(context[:my_mote], "MyNamespace::MyClass"))
+      expect(context[:my_mote][:constant].resolve).to eq(my_module::MyNamespace::MyClass)
       expect(subject.constant).to eq(my_module::MyNamespace::MyClass)
     end
   end
@@ -78,7 +79,6 @@ describe NamespaceMotive do
 
     it "resolves multiple namespaces" do
       expect(context[:parent_mote][:namespace].resolve).to eq(my_module::ParentNamespace)
-      expect(context[:parent_mote][:namespace].resolve_namespace_motive(context[:my_mote][:namespace])).to eq(my_module::ParentNamespace::MyNamespace)
 
       # FAILZ
       expect(context[:my_mote].parent).to eq(context[:parent_mote])

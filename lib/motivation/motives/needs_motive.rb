@@ -13,8 +13,8 @@ module Motivation
         end
       end
 
-      def resolve_mote(mote)
-        self.resolve_new_motive mote[:new]
+      def resolve_mote
+        resolve
       end
 
       def resolve_new_motive(new_motive)
