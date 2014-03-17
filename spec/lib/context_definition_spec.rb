@@ -86,9 +86,11 @@ describe ContextDefinition do
           foo_mote! bar_motive
         end
       end
-      motive = motive_reference(:foo_motive)
-      mote = mote_definition(:foo_mote, motive_reference(:bar_motive))
-      mote.instance_variable_set :@parent, motive
+      foo_motive = motive_reference(:foo_motive)
+      bar_motive = motive_reference(:bar_motive)
+      bar_motive.instance_variable_set :@parent, motive_block(foo_motive)
+      mote = mote_definition(:foo_mote, bar_motive)
+      mote.instance_variable_set :@parent, foo_motive
       expect(subject.motes).to eq([mote])
     end
 
@@ -115,21 +117,32 @@ describe ContextDefinition do
       subject.eval do
         foo_mote!.foo_motive
       end
-      expect(subject.motes).to eq([mote_definition(:foo_mote, motive_reference(:foo_motive))])
+      foo_motive = motive_reference(:foo_motive)
+      foo_mote = mote_definition(:foo_mote, foo_motive)
+      foo_motive.instance_variable_set :@parent, foo_mote
+      expect(subject.motes).to eq([foo_mote])
     end
 
     it "lets you say foo_mote!.foo_motive 5" do
       subject.eval do
         foo_mote!.foo_motive 5
       end
-      expect(subject.motes).to eq([mote_definition(:foo_mote, motive_reference(:foo_motive, 5))])
+      foo_motive = motive_reference(:foo_motive, 5)
+      foo_mote = mote_definition(:foo_mote, foo_motive)
+      foo_motive.instance_variable_set :@parent, foo_mote
+      expect(subject.motes).to eq([foo_mote])
     end
 
     it "lets you say foo_mote!.foo_motive.bar_motive" do
       subject.eval do
         foo_mote!.foo_motive(1).bar_motive(2)
       end
-      expect(subject.motes).to eq([mote_definition(:foo_mote, motive_reference(:foo_motive, 1), motive_reference(:bar_motive, 2))])
+      foo_motive = motive_reference(:foo_motive, 1)
+      bar_motive = motive_reference(:bar_motive, 2)
+      foo_mote = mote_definition(:foo_mote, foo_motive, bar_motive)
+      foo_motive.instance_variable_set :@parent, foo_mote
+      bar_motive.instance_variable_set :@parent, foo_mote
+      expect(subject.motes).to eq([foo_mote])
     end
   end
 end

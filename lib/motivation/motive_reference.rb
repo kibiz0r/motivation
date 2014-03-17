@@ -12,21 +12,21 @@ module Motivation
 
     def to_s
       parts = [
-        ":#{name}",
-        args.map(&:to_s).join(", ")
+        ":#{self.name}",
+        self.args.map(&:to_s).join(", ")
       ].reject &:blank?
-      "#{parent}.motive(#{parts.join ", "})"
+      "#{self.parent.name}.motive_reference(#{parts.join ", "})"
     end
 
     def ==(other)
       other.is_a?(MotiveReference) &&
-        self.context == other.context &&
+        self.parent == other.parent &&
         self.name == other.name && 
         self.args == other.args
     end
 
     def mote!(name, *motives)
-      context.mote! name, *(motives + [self])
+      self.context.mote! name, *(motives + [self])
     end
   end
 end

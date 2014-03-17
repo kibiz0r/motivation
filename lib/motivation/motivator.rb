@@ -63,8 +63,9 @@ module Motivation
       context_resolver.resolve_definition self, context_definition
     end
 
-    def resolve_mote_definition(context, mote_definition, *motives)
-      mote_resolver.resolve_definition context, mote_definition, *motives
+    def resolve_mote_definition(context, mote_definition)
+      mote_resolver.resolve_mote_definition context, mote_definition
+      # mote_resolver.resolve_definition context, mote_definition, *motives
     end
 
     def resolve_motive_reference(motive_reference)

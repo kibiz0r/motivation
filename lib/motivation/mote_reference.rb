@@ -10,7 +10,7 @@ module Motivation
     end
 
     def to_s
-      ".mote(:#{name})"
+      "#{self.parent}.mote_reference(:#{name})"
     end
 
     def ==(other)

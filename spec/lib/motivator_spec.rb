@@ -25,11 +25,10 @@ describe Motivator do
     end
 
     it "resolves a mote" do
-      my_mote = Mote.new(
-        context,
-        mote_definition(:my_mote, motive_reference(:awesome))
-      )
-      expect(context[:my_mote]).to eq(my_mote)
+      awesome_motive = motive_reference(:awesome)
+      my_mote = mote_definition(:my_mote, awesome_motive)
+      awesome_motive.instance_variable_set :@parent, my_mote
+      expect(context[:my_mote]).to eq(Mote.new(context, my_mote))
     end
   end
 end

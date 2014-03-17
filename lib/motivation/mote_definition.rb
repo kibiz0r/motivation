@@ -22,7 +22,7 @@ module Motivation
         ":#{name}",
         motives.map { |kv| kv.map(&:to_s).join ": " }.join(", ")
       ].reject &:blank?
-      "#{parent}.mote!(#{parts.join ", "})"
+      "#{parent}.mote_definition!(#{parts.join ", "})"
     end
 
     def ==(other)
@@ -40,7 +40,7 @@ module Motivation
         end
         return @motives[name]
       end
-      @motives[name] = context.motive(name, *args)
+      @motives[name] = super name, *args
       self
     end
 

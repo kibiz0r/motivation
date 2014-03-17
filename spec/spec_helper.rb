@@ -26,6 +26,10 @@ def motive_reference(name, *args)
   MotiveReference.new context_definition, name, *args
 end
 
+def motive_block(motive)
+  MotiveBlock.new context_definition, motive
+end
+
 class Module
   def const_reset(name, value)
     remove_const name if const_defined? name

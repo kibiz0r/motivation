@@ -38,6 +38,7 @@ describe NewMotive do
 
     describe "#new" do
       it "instantiates the mote" do
+        # TODO: Resolve motives from blocks
         expect(subject.namespace).to eq(my_module::MyNamespace)
         expect(subject.constant).to eq(my_module::MyNamespace::MyClass)
         expect(subject.new).to be_a_kind_of(my_module::MyNamespace::MyClass)

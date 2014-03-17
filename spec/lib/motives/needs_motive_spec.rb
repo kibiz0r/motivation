@@ -26,7 +26,9 @@ describe NeedsMotive do
   describe "#new" do
     it "instantiates the mote with dependencies" do
       expect(my_module::MyDep.new).to be_a_kind_of(my_module::MyDep)
-      expect(subject.new.dep).to be_a_kind_of(my_module::MyDep)
+      expect(subject[:needs].resolve_new_motive(subject[:new])).to be_a_kind_of(my_module::MyClass)
+      expect(subject[:needs].resolve_new_motive(subject[:new]).dep).to be_a_kind_of(my_module::MyDep)
+      # expect(subject.new.dep).to be_a_kind_of(my_module::MyDep)
     end
   end
 

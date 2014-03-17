@@ -1,16 +1,15 @@
 module Motivation
   module Motives
     class ConstantMotive < Motive
-      def initialize(constant)
+      attr_reader :constant
+
+      def initialize(parent, constant)
+        super parent
         @constant = constant
       end
 
-      def resolve(mote)
-        # namespace = if mote.respond_to? :namespace
-        #               mote.namespace.name.demodulize
-        #             end
-        # mote.require_source_const [namespace, @constant].compact.join("::")
-        mote.require_source_const @constant
+      def resolve
+        self.parent.require_source_const @constant
       end
     end
   end

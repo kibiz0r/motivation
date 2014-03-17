@@ -1,6 +1,11 @@
 module Motivation
   class Motive
+    attr_reader :parent
     attr_writer :args
+
+    def initialize(parent)
+      @parent = parent
+    end
 
     def args
       @args ||= []
@@ -21,7 +26,7 @@ module Motivation
 
     def to_s
       parts = [name, args.map(&:to_s).join(", ")].reject &:blank?
-      "motive(#{parts.join ", "})"
+      "[#{self.parent.name}].motive(#{parts.join ", "})"
     end
   end
 end

@@ -22,22 +22,23 @@ module Motivation
 
     def to_s
       parts = [
-        ":#{name}"
+        ":#{self.name}"
       ]
-      "#{context}: mote(#{parts.join ", "}) source: #{definition}"
+      "#{self.context}: mote(#{parts.join ", "}) source: #{self.definition}"
     end
 
     def resolve_mote_reference(mote_reference)
-      context.resolve_mote_reference mote_reference
+      self.context.resolve_mote_reference mote_reference
     end
 
     def resolve_motive_reference(motive_reference)
-      motivator.resolve_motive_reference(motive_reference).resolve self
+      self.motivator.motive_resolver.resolve_motive_reference self, motive_reference
+      # self.motivator.resolve_motive_reference(motive_reference).resolve self
     end
 
     def resolve
-      definition.motives.each_value do |motive_reference|
-        motive = motivator.resolve_motive_reference motive_reference
+      self.definition.motives.each_value do |motive_reference|
+        motive = self.resolve_motive_reference motive_reference
         if motive.respond_to? :resolve_mote
           return motive.resolve_mote self
         end
@@ -46,25 +47,38 @@ module Motivation
       raise "Couldn't resolve #{self}"
     end
 
+    def [](motive_name)
+      if self.definition.motive? motive_name
+        return self.resolve_motive_reference definition.motive(motive_name)
+        # return self.motivator.resolve_motive_reference definition.motive(motive_name)
+      end
+
+      nil
+    end
+
     def method_missing(method, *args, &block)
       # puts "method_missing #{method}"
 
-      if definition.motive? method
-        return resolve_motive_reference definition.motive(method)
+      if self.definition.motive? method
+        # puts "self.definition.motive? method"
+        # return self.resolve_motive_reference definition.motive(method)
+        return self.motivator.motive_resolver.resolve_motive_reference(self, definition.motive(method)).resolve
       end
 
-      if parent && parent.respond_to?(method)
-        return parent.send method, *args, &block
+      if self.parent && self.parent.respond_to?(method)
+        # puts "self.parent && self.parent.respond_to?(method)"
+        return self.parent.send method, *args, &block
       end
 
+      # puts "super"
       super
     end
 
     def respond_to?(method)
       # puts "respond_to? #{method}"
       return true if super
-      return true if definition.motive? method
-      return true if parent && parent.respond_to?(method)
+      return true if self.definition.motive? method
+      return true if self.parent && self.parent.respond_to?(method)
       false
     end
   end

@@ -51,11 +51,18 @@ module Motivation
           self.eval_motive_block motive, &block if block_given?
         end
       else
+        validate_mote_name! name
         self.mote name, *args
       end
     rescue => e
       # puts "problem handling #{self}.#{name}: #{e}"
       super name.to_sym, *args, &block
+    end
+  end
+
+  def validate_mote_name!(mote_name)
+    if %w|to_ary|.include? mote_name.to_s
+      raise "Invalid mote name: \"#{mote_name}\""
     end
   end
 end
