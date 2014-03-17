@@ -26,8 +26,9 @@ module Motivation
     end
 
     def to_s
-      parts = [name, args.map(&:to_s).join(", ")].reject &:blank?
-      "[#{self.parent.name}].motive(#{parts.join ", "})"
+      "#{self.class.name}(#{args.map(&:to_s).join(", ")})"
+      # parts = [name, args.map(&:to_s).join(", ")].reject &:blank?
+      # "[#{self.parent.name}].motive(#{parts.join ", "})"
     end
   end
 end

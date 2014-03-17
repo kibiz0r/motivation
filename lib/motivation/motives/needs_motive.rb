@@ -2,7 +2,7 @@ module Motivation
   module Motives
     class NeedsMotive < Motive
       def initialize(parent, *needs)
-        super parent
+        super parent, *needs
         @needs = needs
       end
 
@@ -14,10 +14,13 @@ module Motivation
       end
 
       def resolve_mote
-        resolve
+        puts "needs resolving #{self.parent}"
+        resolve_new_motive self.parent[:new]
       end
 
       def resolve_new_motive(new_motive)
+        puts "new_motive #{new_motive}"
+        puts "resolve #{self.resolve}"
         new_motive.resolve *self.resolve
       end
     end
