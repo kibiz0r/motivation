@@ -17,7 +17,19 @@ module Motivation
       unless class_name
         raise "Motives must be constants or explicitly implement #name"
       end
-      class_name.demodulize.underscore.sub(/Motive$/, "").to_sym
+      class_name.demodulize.sub(/Motive$/, "").underscore.to_sym
+    end
+
+    def resolve(*args)
+      parent.motivator.motive_resolver.resolve_motive self, *args
+    end
+
+    def resolve_motive(motive, *args)
+      resolve_method = :"resolve_#{motive.class.name.demodulize.underscore}"
+      if self.respond_to? resolve_method
+        self.send resolve_method, motive, *args
+      else
+      end
     end
 
     def ==(other)

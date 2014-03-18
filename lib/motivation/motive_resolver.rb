@@ -11,7 +11,12 @@ module Motivation
       mote.motivator.motive_definition(motive_reference.name).new mote, *motive_reference.args
     end
 
-    def resolve_motive(motive)
+    def resolve_motive(motive, *args)
+      if motive.parent.is_a?(Mote) && motive.parent.parent[motive.name]
+        motive.parent.parent[motive.name].resolve_motive motive, *args
+      else
+        motive.resolve_self *args
+      end
     end
   end
 end
