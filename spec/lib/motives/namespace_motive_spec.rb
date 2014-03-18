@@ -81,6 +81,69 @@ describe NamespaceMotive do
       expect(context[:parent_mote][:namespace].resolve).to eq(my_module::ParentNamespace)
 
       # FAILZ
+      # The motive's resolution parent is only another namespace motive in this case because it happens to be the only motive in the parent
+      # In these cases, its resolution parent would be the constant motive, which can't resolve a namespace anyway
+      # parent_mote!.namespace("ParentNamespace").constant("MyClass") do
+      # parent_mote! namespace("ParentNamespace"), constant("MyClass") do
+      #   my_mote!.namespace "MyNamespace"
+      # end
+      #
+      # Mote(:my_mote).namespace =>
+      # Mote(:my_mote).motive(:namespace).resolve (which is NamespaceMotive("MyNamespace").resolve) =>
+      # MotiveResolver.resolve_motive(NamespaceMotive("MyNamespace")) =>
+      # NamespaceMotive("ParentNamespace").resolve_namespace_motive(NamespaceMotive("MyNamespace")) =>
+      # Motivator.resolve_namespace_motive(NamespaceMotive("ParentNamespace"))
+      #
+      # Mote.constant =>
+      # find a resolve_constant starting with the right-most Motive or check parent motives =>
+      # find a resolve_constant_motive on the soonest parent (Motive or Mote) of the one you wanted to call resolve_constant on =>
+      #
+      # Mote.namespace
+      # find a resolve_namespace starting with the right-most Motive or check parent motives =>
+      # find a resolve_namespace_motive on the nearest parent (Motive or Mote) of the one you wanted to call resolve_namespace on =>
+      # repeat until you reach the top, where you call resolve_namespace_motive on the top responding motive you found
+      #
+      # resolve_<type>_<motive> on the motive (or mote?) you would call => 
+      #
+      # resolve_constant => resolve_constant_motive => resolve_constant_motive_reference
+      # Mote(:my_mote).constant =>
+      # Mote(:my_mote).motive(:constant).resolve (which is ConstantMotive("MyClass").resolve) =>
+      # MotiveResolver.resolve_motive(ConstantMotive("MyClass")) =>
+      # ConstantMotive.resolve_constant_motive(ConstantMotive("MyClass"))
+      # ConstantMotive("MyClass").resolve_constant
+      # ConstantMotive("MyClass").resolve_constant
+      #
+      # parent_mote!.namespace("ParentNamespace").constant("ParentClass").needs(foo_mote).new do
+      #   my_mote!.namespace("MyNamespace").constant("MyClass").needs(bar_mote).new
+      # end
+      #
+      # context[:my_mote].resolve =>
+      # Mote(:my_mote).resolve =>
+      # Mote(:my_mote).motive(:new).resolve =>
+      # NewMotive().resolve =>
+      # MotiveResolver.resolve_motive(NewMotive()) => # finds NewMotive().resolve_self, then finds NeedsMotive().resolve_new_motive and prefers that
+      #
+      # NeedsMotive().resolve_new_motive(NewMotive()) => 
+      # NewMotive().resolve_self(NeedsMotive(bar_mote).resolve_self) => # saying NewMotive().resolve would start an infinite loop
+      #
+      # ConstantMotive("MyClass").resolve.new(bar) =>
+      # MotiveResolver.resolve_motive(ConstantMotive("MyClass")) => # finds ConstantMotive("MyClass").resolve_self, then finds NamespaceMotive("MyNamespace").resolve_constant_motive and prefers that
+      #
+      # NamespaceMotive("MyNamespace").resolve_constant_motive(ConstantMotive("MyClass")) =>
+      # NamespaceMotive("MyNamespace").resolve.const_get(ConstantMotive("MyClass").constant) =>
+      # MotiveResolver.resolve_motive(NamespaceMotive("MyNamespace")) => # finds NamespaceMotive("MyNamespace").resolve_self, then finds NamespaceMotive("ParentNamespace").resolve_namespace_motive and prefers that
+      #
+      # NamespaceMotive("ParentNamespace").resolve_namespace_motive(NamespaceMotive("MyNamespace")) =>
+      # NamespaceMotive("ParentNamespace").resolve.const_get((NamespaceMotive("MyNamespace").namespace) =>
+      # MotiveResolver.resolve_motive(NamespaceMotive("MyNamespace")) => # only finds NamespaceMotive("ParentNamespace").resolve_self, or does it find MotiveResolver.resolve_namespace_motive and ignores it because it == self?
+      #
+      # NamespaceMotive("ParentNamespace").resolve_self =>
+      # Object.const_get(NamespaceMotive("ParentNamespace").namespace)
+      #
+      # If MotiveResolver.resolve_motive(FooMotive) can == MotiveResolver.resolve_foo_motive, then Motives can be MotiveResolvers themselves
+      # Should Motes be MoteResolvers then? I guess they already are. Normal Motes just call resolve_self on their children to resolve them -- Motives can resolve child Motes, but I can't think of a use case
+      # I don't think there's any formal type that a resolver has to be, just implementing resolve_<thing> and being in the graph should be enough
+      # Contexts stop resolution from bubbling up outside of them because they can resolve everything inside of them, but nothing outside of them can resolve a context except another context
       expect(context[:my_mote].parent).to eq(context[:parent_mote])
       expect(context[:my_mote][:namespace].resolve).to eq(my_module::ParentNamespace::MyNamespace)
       expect(subject.namespace).to eq(my_module::ParentNamespace::MyNamespace)

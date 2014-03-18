@@ -14,13 +14,10 @@ module Motivation
       end
 
       def resolve_mote
-        puts "needs resolving #{self.parent}"
         resolve_new_motive self.parent[:new]
       end
 
       def resolve_new_motive(new_motive)
-        puts "new_motive #{new_motive}"
-        puts "resolve #{self.resolve}"
         new_motive.resolve *self.resolve
       end
     end

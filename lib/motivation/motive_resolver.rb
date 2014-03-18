@@ -10,5 +10,8 @@ module Motivation
     def resolve_motive_reference(mote, motive_reference)
       mote.motivator.motive_definition(motive_reference.name).new mote, *motive_reference.args
     end
+
+    def resolve_motive(motive)
+    end
   end
 end
