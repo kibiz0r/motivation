@@ -9,17 +9,25 @@ module Motivation
       end
 
       def resolve
-        self.parent.require_source_const @namespace
+        if self.parent.is_a?(Mote) && self.parent.parent[:namespace]
+          self.parent.parent[:namespace].resolve_namespace_motive self
+        else
+          resolve_self
+          # self.parent.require_source_const @namespace
+        end
       end
 
       def resolve_mote
         resolve
       end
 
-      def resolve_constant_motive_reference(motive_reference)
-        constant_name = motive_reference.args.first
-        constant = [self.namespace, constant_name].compact.join "::"
-        ConstantMotive.new self.parent, constant
+      def resolve_self
+        # Object.const_get self.namespace
+        self.parent.require_source_const self.namespace
+      end
+
+      def resolve_namespace_motive(namespace_motive)
+        resolve_self.const_get namespace_motive.namespace
       end
     end
   end

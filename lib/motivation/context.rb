@@ -8,8 +8,12 @@ module Motivation
       @motes = {}
     end
 
-    def resolve_mote_definition(mote_definition, *motives)
-      motivator.resolve_mote_definition self, mote_definition, *motives
+    def resolve_mote_definition(mote_definition)
+      if mote_definition.parent == self.definition
+        motivator.resolve_mote_definition self, mote_definition
+      else
+        motivator.resolve_mote_definition resolve_mote_definition(mote_definition.parent), mote_definition
+      end
     end
 
     def resolve_mote_reference(mote_reference)
