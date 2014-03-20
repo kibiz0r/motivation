@@ -2,27 +2,75 @@ module Motivation
   class MotiveBlock
     include MoteDsl
 
-    attr_reader :parent
+    attr_reader :mote_definition, :motives
 
-    def initialize(parent, motive)
-      @parent = parent
-      @motive = motive
+    def initialize(mote_definition, *motive_instances)
+      @mote_definition = mote_definition
+      @motives = motive_instances
     end
 
     def to_s
-      "#{self.parent}.#{@motive}->"
+      "MotiveBlock(#{self.motives})"
     end
 
     def ==(other)
       other.is_a?(MotiveBlock) &&
-        self.parent == other.parent &&
-        @motive == other.instance_variable_get(:@motive)
+        self.mote_definition == other.mote_definition &&
+        self.motives == other.motives
     end
 
-    def mote!(name, *motives)
-      MoteDefinition.new @motive, name, *motives
-      # TODO: This?
-      # MoteDefinition.new self, name, *motives
-    end
+        # north_pole! do
+        #   namespace "Reindeer" do
+        #     constant "Vixen" do
+        #     end
+        #   end
+        # end
+    def method_missing(method_name, *args, &block)
+      name = method_name.to_s
+      if invocation = name.end_with?("!")
+        name.chop!
+      end
+
+      puts "evaling MotiveBlock.#{method_name}"
+
+      if invocation
+        # namespace "NorthPole" do
+        #   santa! <-- mote_definition
+        # end
+        motives = self.motives + args
+        self.mote_definition!(name, *motives).tap do |mote_definition|
+          self.add_mote_definition mote_definition
+          if block_given?
+            # namespace "NorthPole" do
+            #   ice_cap! do
+            #     ...
+            #   end
+            # end
+            self.eval_mote_block mote_definition, &block
+          end
+        end
+      else
+        # parent_mote! do
+        #   namespace "Foo" do
+        #     constant "Bar" do
+        #     end
+        #   end
+        #
+        #   namespace "Blurgle" do
+        #     my_mote! constant("Eek")
+        #   end
+        # end
+        if self.motive_instance_resolvable? name
+          self.motive_instance!(name, *args).tap do |motive_instance|
+            if block_given?
+              self.eval_motive_block motive_instance, &block
+            end
+          end
+        else
+          validate_mote_name! name
+          self.mote_reference name
+        end
+      end
+    end      
   end
 end

@@ -12,8 +12,8 @@ module Motivation
     end
 
     def resolve_motive(motive, *args)
-      if motive.parent.is_a?(Mote) && motive.parent.parent[motive.name]
-        motive.parent.parent[motive.name].resolve_motive motive, *args
+      if motive.mote && motive.mote.motive_instances
+        # scan backwards through motive instances for something that resolves this motive definition
       else
         motive.resolve_self *args
       end

@@ -1,22 +1,25 @@
 module Motivation
-  REQUIRES = %w|
-motivation/version.rb
-motivation/mote_dsl.rb
-motivation/mote.rb
+  Requires = %w|
 motivation/motivation.rb
-motivation/context.rb
-motivation/motion.rb
-motivation/motive.rb
-motivation/context_definition.rb
+motivation/version.rb
+
+motivation/mote_dsl.rb
 motivation/mote_definition.rb
 motivation/mote_reference.rb
 motivation/motive_reference.rb
-motivation/motive_block.rb
+motivation/motive_instance.rb
 motivation/mote_block.rb
-motivation/context_resolver.rb
+motivation/motive_block.rb
+
 motivation/mote_resolver.rb
 motivation/motive_resolver.rb
+motivation/mote_definition_resolver.rb
+motivation/motive_instance_resolver.rb
+
 motivation/motivator.rb
+motivation/mote.rb
+motivation/motive.rb
+
 motivation/motives/constant_motive.rb
 motivation/motives/namespace_motive.rb
 motivation/motives/new_motive.rb

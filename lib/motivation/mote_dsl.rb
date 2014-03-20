@@ -2,62 +2,78 @@ module Motivation
   module MoteDsl
     extend Forwardable
 
-    DELEGATED_TO_CONTEXT = %w|
-      motive_defined?
-      add_mote_definition
+    DelegatedToMotivator = %w|
     |.map &:to_sym
-    def_delegators :context, *DELEGATED_TO_CONTEXT
+    def_delegators :motivator, *DelegatedToMotivator
 
     def eval(&block)
-      instance_eval &block
+      puts "#{self}#eval"
+      self.instance_eval &block
     end
 
-    def context
-      unless self.respond_to? :parent
-        raise "#{self.class} must implement #context or #parent"
-      end
-      self.parent.context
+    def motivator
+      self.parent && self.parent.motivator
     end
 
-    def mote!(name, *motives)
-      MoteDefinition.new self, name, *motives
+    def mote_definition!(name, *motives)
+      MoteDefinition.new self.mote_definition, name, *motives
     end
 
-    def mote(name, *motives)
-      MoteReference.new self, name, *motives
+    def mote_reference(name)
+      nil
     end
 
-    def motive(name, *args)
-      MotiveReference.new self, name, *args
+    def motive_instance!(name, *args)
+      MotiveInstance.new self, name, *args
     end
 
-    def eval_mote_block(mote, &block)
-      MoteBlock.new(self, mote).eval &block
+    def eval_mote_block(mote_definition, &block)
+      MoteBlock.new(mote_definition).eval &block
     end
 
-    def eval_motive_block(motive, &block)
-      MotiveBlock.new(self, motive).eval &block
+    def eval_motive_block(motive_instance, &block)
+      MotiveBlock.new(self.mote_definition, motive_instance).eval &block
     end
 
-    def method_missing(name, *args, &block)
-      name = name.to_s
-      if name.end_with? "!"
-        self.mote!(name.chop, *args).tap do |mote|
-          self.add_mote_definition mote
-          self.eval_mote_block mote, &block if block_given?
-        end
-      elsif self.motive_defined?(name)
-        self.motive(name, *args).tap do |motive|
-          self.eval_motive_block motive, &block if block_given?
-        end
-      else
-        validate_mote_name! name
-        self.mote name, *args
-      end
-    rescue => e
-      # puts "problem handling #{self}.#{name}: #{e}"
-      super name.to_sym, *args, &block
+    def motive_instance_resolvable?(name)
+      false
     end
+
+    def motive_reference_resolvable?(name)
+      false
+    end
+
+    def add_mote_definition(mote_definition)
+      self.mote_definition.add_mote_definition mote_definition
+    end
+
+    # def mote(name, *motives)
+    #   MoteReference.new self, name, *motives
+    # end
+
+    # def motive(name, *args)
+    #   MotiveReference.new self, name, *args
+    # end
+
+    # def eval_mote_block(mote, &block)
+    #   MoteBlock.new(self, mote).eval &block
+    # end
+
+    # def eval_motive_block(motive, &block)
+    #   MotiveBlock.new(self, motive).eval &block
+    # end
+
+    # parent_mote!.namespace.constant do
+    #   my_mote!
+    # end
+    # my_mote.parent == parent_mote
+
+    # def method_missing(method_name, *args, &block)
+    #   puts method_name
+    # rescue => e
+    #   puts "problem handling #{self}.#{method_name}: #{e}\n#{e.backtrace.join "\n"}"
+    #   super method_name.to_sym, *args, &block
+    # end
   end
 
   def validate_mote_name!(mote_name)

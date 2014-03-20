@@ -3,8 +3,8 @@ module Motivation
     class NamespaceMotive < Motive
       attr_reader :namespace
 
-      def initialize(parent, namespace)
-        super parent
+      def initialize(mote, namespace)
+        super mote
         @namespace = namespace
       end
 
@@ -17,18 +17,18 @@ module Motivation
       #   end
       # end
 
-      def resolve_mote
-        resolve
-      end
+      # def resolve_mote
+      #   resolve
+      # end
 
-      def resolve_self
-        # Object.const_get self.namespace
-        self.parent.require_source_const self.namespace
-      end
+      # def resolve_self
+      #   # Object.const_get self.namespace
+      #   self.parent.require_source_const self.namespace
+      # end
 
-      def resolve_namespace_motive(namespace_motive)
-        resolve_self.const_get namespace_motive.namespace
-      end
+      # def resolve_namespace_motive(namespace_motive)
+      #   resolve_self.const_get namespace_motive.namespace
+      # end
     end
   end
 end
