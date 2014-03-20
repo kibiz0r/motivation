@@ -4,10 +4,14 @@ describe NamespaceMotive do
   let_module :my_module do |mod|
     mod::MyClass = "wrong class"
     mod::MyNamespace = "wrong namespace"
-    mod::ParentNamespace = Module.new.tap do |parent|
-      parent::MyClass = "wrong class"
-      parent::MyNamespace = Module.new.tap do |namespace|
-        namespace::MyClass = Class.new
+    mod::TopNamespace = Module.new.tap do |top|
+      top::MyClass = "wrong class"
+      top::MyNamespace = "wrong namespace"
+      top::MiddleNamespace = Module.new.tap do |middle|
+        middle::MyClass = "wrong class"
+        middle::MyNamespace = Module.new.tap do |namespace|
+          namespace::MyClass = Class.new
+        end
       end
     end
   end

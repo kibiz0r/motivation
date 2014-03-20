@@ -11,8 +11,12 @@ module Motivation
       mote.motivator.motive_definition(motive_reference.name).new mote, *motive_reference.args
     end
 
-    def resolve_motive(motive, *args)
+    def resolve_motive(motivator, motive, *args)
       if motive.mote && motive.mote.motive_instances
+        starting_index = motive.mote.motive_instances.find_index do |motive_instance|
+          motive_instance == motive.instance
+        end
+        # find the earliest match for this motive, and starting there...
         # scan backwards through motive instances for something that resolves this motive definition
       else
         motive.resolve_self *args

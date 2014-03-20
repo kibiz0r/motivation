@@ -50,8 +50,8 @@ module Motivation
       self.require_source_const("#{motive_name}_motive")
     end
 
-    def resolve_motive(motive)
-      self.motive_resolver.resolve_motive self, motive
+    def resolve_motive(motive, *args)
+      self.motive_resolver.resolve_motive self, motive, *args
     end
 
     def [](mote_name)

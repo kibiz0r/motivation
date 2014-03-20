@@ -16,7 +16,7 @@ module Motivation
       # and instantiate them if they implement #resolve_motive_instance
       definition = motive_instance.parent.resolve_motive_definition motive_instance.name
       mote = motive_instance.parent.resolve
-      definition.new mote, *motive_instance.args
+      definition.new mote, motive_instance, *motive_instance.args
     end
   end
 end

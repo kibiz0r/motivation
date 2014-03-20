@@ -4,7 +4,9 @@ module Motivation
 
     extend Forwardable
 
-    def_delegators :definition, :name # Should this use a resolve chain?
+    # Should these use a resolve chain?
+    def_delegators :definition, :name
+
     # def_delegators :motivator, :source_const, :require_source_const
     def_delegators :motivator, *Motivator::Resolvers # TODO: resolve chain
 
@@ -15,8 +17,12 @@ module Motivation
       MoteDefinition.new parent, name, *args
     end
 
+    def motivator
+      # I'm actually not sure where the motivator should come from
+      self.definition.motivator
+    end
+
     def initialize(definition)
-      # binding.pry
       @definition = definition
     end
 

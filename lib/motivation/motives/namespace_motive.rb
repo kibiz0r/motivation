@@ -3,8 +3,8 @@ module Motivation
     class NamespaceMotive < Motive
       attr_reader :namespace
 
-      def initialize(mote, namespace)
-        super mote
+      def initialize(mote, motive_instance, namespace)
+        super mote, motive_instance
         @namespace = namespace
       end
 

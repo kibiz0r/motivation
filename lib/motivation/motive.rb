@@ -3,17 +3,13 @@ module Motivation
     extend Forwardable
 
     def_delegators :mote, :motivator
+    def_delegators :instance, :args
 
     attr_reader :mote
-    attr_writer :args
 
-    def initialize(mote, *args)
+    def initialize(mote, motive_instance)
       @mote = mote
-      @args = args
-    end
-
-    def args
-      @args ||= []
+      @instance = motive_instance
     end
 
     def name
@@ -47,7 +43,7 @@ module Motivation
     end
 
     def to_s
-      "#{self.class.name}(#{args.map(&:to_s).join(", ")})"
+      "#{self.class.name}(#{self.args.map(&:to_s).join(", ")})"
       # parts = [name, args.map(&:to_s).join(", ")].reject &:blank?
       # "[#{self.parent.name}].motive(#{parts.join ", "})"
     end
