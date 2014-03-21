@@ -6,7 +6,7 @@ module Motivation
 
     def initialize(parent, name, *args)
       self.parent = parent
-      @name = name
+      @name = name.to_sym
       @args = args
     end
 
@@ -17,8 +17,16 @@ module Motivation
       end
     end
 
-    def resolve(*args)
-      self.motivator.resolve_motive_instance self
+    def dup
+      MotiveInstance.new self.parent, self.name, *self.args
+    end
+
+    def to_s
+      parts = [
+        ":#{self.name}",
+        self.args.map(&:to_s).join(", ")
+      ].reject &:blank?
+      "#{self.parent.name}.motive_instance(#{parts.join ", "})"
     end
   end
 end

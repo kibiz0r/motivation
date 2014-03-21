@@ -1,5 +1,6 @@
 module Motivation
   class MoteDefinition
+    # I'm not sure this really needs the DSL anymore, since adding expressions
     include MoteDsl
 
     attr_accessor :parent
@@ -9,21 +10,24 @@ module Motivation
       self.parent = parent
       @name = name.to_sym if name
       @motives = motives
+      motives.each do |motive|
+        motive.parent = self
+      end
     end
 
-    def resolve
-      self.motivator.resolve_mote_definition self
-    end
+    # def resolve
+    #   self.motivator.resolve_mote_definition self
+    # end
 
-    def resolve_motive_definition(motive_name)
-      # This is where we should look up any renaming of motives
-      #   e.g. my_mote! module_name: namespace("Foo")
-      self.motivator.resolve_motive_definition motive_name
-    end
+    # def resolve_motive_definition(motive_definition_name)
+    #   # This is where we should look up any renaming of motives
+    #   #   e.g. my_mote! module_name: namespace("Foo")
+    #   self.motivator.resolve_motive_definition_name motive_definition_name
+    # end
 
-    def motivator
-      self.parent && self.parent.motivator
-    end
+    # def motivator
+    #   self.parent && self.parent.motivator
+    # end
 
     def motive(name, *args)
       name = name.to_sym
@@ -51,11 +55,11 @@ module Motivation
     end
 
     def motive_instance_resolvable?(name)
-      self.motivator.source_const? "#{name}_motive"
+      raise "the roof"
     end
 
     def motive_reference_resolvable?(name)
-      self.motivator.source_const? "#{name}_motive"
+      raise "the roof"
     end
 
     def add_mote_definition(mote_definition)
@@ -69,31 +73,6 @@ module Motivation
     def eval_motive_block(motive_instance, &block)
       raise "Mote definitions can't eval Motive blocks"
     end
-
-    def method_missing(method_name, *args, &block)
-      name = method_name.to_s
-      if invocation = name.end_with?("!")
-        name.chop!
-      end
-
-      if invocation
-        self.mote_definition!(name, *args).tap do |mote_definition|
-          puts "adding mote definition #{name}"
-          self.add_mote_definition mote_definition
-          self.eval_mote_block mote_definition, &block if block_given?
-        end
-      else
-        if self.motive_instance_resolvable? name
-          self.motive_instance!(name, *args).tap do |motive_instance|
-            self.add_motive_instance motive_instance
-          end
-          self.eval_mote_block self, &block if block_given?
-        else
-          validate_mote_name! name
-          self.mote_reference name
-        end
-      end
-    end      
 
     def to_s
       parts = [

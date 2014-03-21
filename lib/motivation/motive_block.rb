@@ -4,7 +4,8 @@ module Motivation
 
     attr_reader :mote_definition, :motives
 
-    def initialize(mote_definition, *motive_instances)
+    def initialize(motivator, mote_definition, *motive_instances)
+      @motivator = motivator
       @mote_definition = mote_definition
       @motives = motive_instances
     end
@@ -19,6 +20,15 @@ module Motivation
         self.motives == other.motives
     end
 
+    def add_mote_definition(mote_definition)
+      puts "add_mote_definition #{mote_definition}"
+      @motivator.add_mote_definition mote_definition
+    end
+
+    def mote_definition_expression(mote_definition)
+      MoteDefinitionExpression.new @motivator, mote_definition
+    end
+
         # north_pole! do
         #   namespace "Reindeer" do
         #     constant "Vixen" do
@@ -31,24 +41,22 @@ module Motivation
         name.chop!
       end
 
-      puts "evaling MotiveBlock.#{method_name}"
-
       if invocation
         # namespace "NorthPole" do
         #   santa! <-- mote_definition
         # end
-        motives = self.motives + args
-        self.mote_definition!(name, *motives).tap do |mote_definition|
-          self.add_mote_definition mote_definition
-          if block_given?
-            # namespace "NorthPole" do
-            #   ice_cap! do
-            #     ...
-            #   end
-            # end
-            self.eval_mote_block mote_definition, &block
-          end
+        motives = self.motives.map(&:dup) + args
+        mote_definition = self.mote_definition! name, *motives
+        self.add_mote_definition mote_definition
+        if block_given?
+          # namespace "NorthPole" do
+          #   ice_cap! do
+          #     ...
+          #   end
+          # end
+          self.eval_mote_block mote_definition, &block
         end
+        self.mote_definition_expression mote_definition
       else
         # parent_mote! do
         #   namespace "Foo" do

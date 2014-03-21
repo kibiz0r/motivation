@@ -8,7 +8,9 @@ module Motivation
     def_delegators :definition, :name
 
     # def_delegators :motivator, :source_const, :require_source_const
-    def_delegators :motivator, *Motivator::Resolvers # TODO: resolve chain
+    def_delegators :motivator,
+      :require_source_const,
+      *Motivator::Resolvers # TODO: resolve chain
 
     attr_reader :motivator, :definition
 
@@ -17,17 +19,15 @@ module Motivation
       MoteDefinition.new parent, name, *args
     end
 
-    def motivator
-      # I'm actually not sure where the motivator should come from
-      self.definition.motivator
-    end
-
-    def initialize(definition)
+    def initialize(motivator, definition)
+      @motivator = motivator
       @definition = definition
     end
 
     def parent
-      self.definition.parent.resolve
+      if self.definition.parent
+        self.motivator.resolve_mote_definition self.definition.parent
+      end
     end
 
     def motive_name(motive)
@@ -40,12 +40,26 @@ module Motivation
       self.definition.motives
     end
 
+    def resolve_motive_definition_name(motive_definition_name)
+      self.motivator.resolve_motive_definition_name motive_definition_name
+    end
+
+    def resolve_motive_instance(motive_instance)
+      self.motivator.resolve_motive_instance self, motive_instance
+    end
+
+    def resolve_motive(motive, *args, &block)
+      self.motivator.resolve_motive self, motive, *args, &block
+    end
+
     def [](motive_name)
       motive_name = motive_name.to_sym
       motive_instance = self.definition.motives.reverse_each.find do |motive_instance|
         motive_instance.name.to_sym == motive_name
       end
-      motive_instance.resolve
+      if motive_instance
+        resolve_motive_instance motive_instance
+      end
     end
 
     def ==(other)
@@ -61,9 +75,12 @@ module Motivation
       "#{self.context}: mote(#{parts.join ", "}) source: #{self.definition}"
     end
 
-    def method_missing(method_name, *args, &block)
-      motive = self[method_name]
-      motive.resolve *args
+    def method_missing(motive_name, *args, &block)
+      if motive = self[motive_name]
+        resolve_motive motive, *args, &block
+      else
+        raise "No such motive: #{motive_name}"
+      end
     end
 
     # def resolve_mote_reference(mote_reference)

@@ -17,8 +17,7 @@ describe NamespaceMotive do
   end
 
   let :motivator do
-    Motivator.new Mote.define(Motive.instance(:context)), Motivation, NamespaceMotive
-    # sets mote.parent to motivator
+    Motivator.new Mote.define(Motive.instance(:context)), Motivation, NamespaceMotive, my_module
   end
 
   subject do
@@ -42,25 +41,27 @@ describe NamespaceMotive do
   it "makes a namespace motive" do
     expect(parent_mote[:namespace]).to eq(
       NamespaceMotive.new(
-        Mote.new(
+        Motive.instance(
           Mote.define(
-            motivator.root_mote_definition,
+            motivator.root_mote.definition,
             :parent_mote,
             Motive.instance(
               :namespace,
               "TopNamespace"
             )
-          )
+          ),
+          :namespace,
+          "TopNamespace"
         ),
         "TopNamespace"
       )
     )
     expect(my_mote[:namespace]).to eq(
       NamespaceMotive.new(
-        Mote.new(
+        Motive.instance(
           Mote.define(
             Mote.define(
-              motivator.root_mote_definition,
+              motivator.root_mote.definition,
               :parent_mote,
               Motive.instance(
                 :namespace,
@@ -71,12 +72,10 @@ describe NamespaceMotive do
             Motive.instance(
               :namespace,
               "MiddleNamespace"
-            ),
-            Motive.instance(
-              :namespace,
-              "MyNamespace"
             )
-          )
+          ),
+          :namespace,
+          "MyNamespace"
         ),
         "MyNamespace"
       )

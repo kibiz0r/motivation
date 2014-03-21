@@ -2,31 +2,29 @@ module Motivation
   class Motive
     extend Forwardable
 
-    def_delegators :mote, :motivator
-    def_delegators :instance, :args
+    def_delegators :instance, :args, :name
 
-    attr_reader :mote
+    attr_reader :instance
 
-    def initialize(mote, motive_instance)
-      @mote = mote
+    def initialize(motive_instance)
       @instance = motive_instance
     end
 
-    def name
-      self.mote.motive_name self
-      # class_name = self.class.name
-      # unless class_name
-      #   raise "Motives must be constants or explicitly implement #name"
-      # end
-      # class_name.demodulize.sub(/Motive$/, "").underscore.to_sym
-    end
+    # def name
+    #   self.mote.motive_name self
+    #   # class_name = self.class.name
+    #   # unless class_name
+    #   #   raise "Motives must be constants or explicitly implement #name"
+    #   # end
+    #   # class_name.demodulize.sub(/Motive$/, "").underscore.to_sym
+    # end
 
     def definition
       self.class
     end
 
-    def resolve(*args)
-      self.motivator.resolve_motive self, *args
+    def resolve(mote, *args)
+      mote.resolve_motive self, *args
     end
 
     def resolve_motive(motive, *args)
@@ -52,11 +50,19 @@ module Motivation
       name_index = args.find_index { |a| a.is_a? Symbol }
       if args.first.is_a? Symbol
         parent = nil
-        name = args.slice! 0, 1
+        name = args.shift
       else
         parent, name = args.slice! 0, 2
       end
       MotiveInstance.new parent, name, *args
+    end
+
+    def self.motive_definition_name
+      self.name.demodulize.underscore
+    end
+
+    def self.can_resolve_motive_with_definition?(motive_definition)
+      self.instance_methods.include? :"resolve_#{motive_definition.motive_definition_name}"
     end
   end
 end

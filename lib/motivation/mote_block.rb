@@ -6,10 +6,14 @@ module Motivation
 
     attr_reader :mote_definition
 
-    def_delegators :mote_definition, :add_mote_definition
-
-    def initialize(mote_definition)
+    def initialize(motivator, mote_definition)
+      @motivator = motivator
       @mote_definition = mote_definition
+    end
+
+    def add_mote_definition(mote_definition)
+      puts "add_mote_definition #{mote_definition}"
+      @motivator.add_mote_definition mote_definition
     end
 
     def mote_definition!(name, *motives)
@@ -25,7 +29,11 @@ module Motivation
     end
 
     def motive_instance_resolvable?(name)
-      self.mote_definition.motive_instance_resolvable? name
+      @motivator.motive_definition_name_resolvable? name
+    end
+
+    def mote_definition_expression(mote_definition)
+      MoteDefinitionExpression.new @motivator, mote_definition
     end
 
     def method_missing(method_name, *args, &block)
@@ -34,29 +42,26 @@ module Motivation
         name.chop!
       end
 
-      puts "evaling MoteBlock.#{method_name}"
-
       if invocation
         # north_pole! do
         #   penguin! <-- mote_definition
         # end
         motives = args
-        self.mote_definition!(name, *motives).tap do |mote_definition|
-          self.add_mote_definition mote_definition
-          if block_given?
-            # north_pole! do
-            #   ice_cap! do
-            #     ...
-            #   end
-            # end
-            self.eval_mote_block mote_definition, &block
-          end
+        mote_definition = self.mote_definition! name, *motives
+        self.add_mote_definition mote_definition
+        if block_given?
+          # north_pole! do
+          #   ice_cap! do
+          #     ...
+          #   end
+          # end
+          self.eval_mote_block mote_definition, &block
         end
+        self.mote_definition_expression mote_definition
       elsif self.motive_instance_resolvable? name
         # north_pole! do
         #   elf! constant("Elf") <-- free motive_instance
         # end
-        puts "motive_instance #{name}"
         self.motive_instance!(name, *args).tap do |motive_instance|
           if block_given?
             # north_pole! do

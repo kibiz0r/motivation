@@ -10,6 +10,7 @@ motivation/motive_reference.rb
 motivation/motive_instance.rb
 motivation/mote_block.rb
 motivation/motive_block.rb
+motivation/mote_definition_expression.rb
 
 motivation/mote_resolver.rb
 motivation/motive_resolver.rb

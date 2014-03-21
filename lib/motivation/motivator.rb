@@ -9,11 +9,11 @@ module Motivation
     motive_instance_resolver
     |.map &:to_sym
 
-    attr_reader :root_mote_definition, *Resolvers
+    attr_reader :root_mote, *Resolvers
 
     # def_delegators :root_mote, :[], :eval
     def eval(&block)
-      self.root_mote_definition.eval &block
+      MoteBlock.new(self, self.root_mote.definition).eval &block
       self
     end
 
@@ -29,7 +29,7 @@ module Motivation
 
       @mote_definitions = {}
 
-      (@root_mote_definition = root_mote_definition).parent = self
+      @root_mote = Mote.new self, root_mote_definition
 
       self.eval &eval_block if block_given?
     end
@@ -42,16 +42,20 @@ module Motivation
       self.mote_definition_resolver.resolve_mote_definition self, mote_definition
     end
 
-    def resolve_motive_instance(motive_instance)
-      self.motive_instance_resolver.resolve_motive_instance self, motive_instance
+    def resolve_motive_instance(mote, motive_instance)
+      self.motive_instance_resolver.resolve_motive_instance mote, motive_instance
     end
 
-    def resolve_motive_definition(motive_name)
-      self.require_source_const("#{motive_name}_motive")
+    def resolve_motive_definition_name(motive_definition_name)
+      self.require_source_const("#{motive_definition_name}_motive")
     end
 
-    def resolve_motive(motive, *args)
-      self.motive_resolver.resolve_motive self, motive, *args
+    def resolve_motive(mote, motive, *args)
+      self.motive_resolver.resolve_motive mote, motive, *args
+    end
+
+    def motive_definition_name_resolvable?(motive_definition_name)
+      self.source_const? "#{motive_definition_name}_motive"
     end
 
     def [](mote_name)
@@ -64,7 +68,6 @@ module Motivation
     end
 
     def add_mote_definition(mote_definition)
-      puts "add_mote_definition"
       mote_name = mote_definition.name.to_sym
       @mote_definitions[mote_name] = mote_definition
     end
