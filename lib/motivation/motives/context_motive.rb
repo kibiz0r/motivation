@@ -1,25 +1,17 @@
 module Motivation
   module Motives
     class ContextMotive < Motive
-      # def resolve_mote_definition(mote_definition)
-      # end
+      def initialize(motive_instance)
+        @mote_definitions = {}
+      end
 
-      # def resolve_mote_name(mote_name)
-      #   mote_name = mote_name.to_sym
+      def find_mote_definition(mote, mote_definition_name)
+        @mote_definitions[mote_definition_name.to_sym]
+      end
 
-      #   if mote = @motes[mote_name]
-      #     return mote
-      #   end
-
-      #   if mote_definition = @mote_definitions[mote_name]
-      #     return resolve_mote_definition mote_definition
-      #   end
-
-      #   raise "No such mote: #{mote_name}"
-      # end
-
-      # def resolve_mote_definition(mote_definition)
-      # end
+      def add_mote_definition(mote, mote_definition)
+        @mote_definitions[mote_definition.name.to_sym] = mote_definition
+      end
     end
   end
 end

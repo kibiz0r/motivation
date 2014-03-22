@@ -23,7 +23,6 @@ module Motivation
       end
 
       if mote.parent
-        puts "resolving via parent #{mote.parent}"
         return mote.parent.resolve_motive motive, *args
       end
 

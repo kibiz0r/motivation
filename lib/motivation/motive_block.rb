@@ -21,8 +21,7 @@ module Motivation
     end
 
     def add_mote_definition(mote_definition)
-      puts "add_mote_definition #{mote_definition}"
-      @motivator.add_mote_definition mote_definition
+      @motivator.mote_definition_adder.add_mote_definition @motivator, @mote_definition, mote_definition
     end
 
     def mote_definition_expression(mote_definition)

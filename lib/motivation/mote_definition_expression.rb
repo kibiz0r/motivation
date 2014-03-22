@@ -16,6 +16,10 @@ module Motivation
       @mote_definition = mote_definition
     end
 
+    def add_mote_definition(mote_definition)
+      @motivator.mote_definition_adder.add_mote_definition @motivator, @mote_definition, mote_definition
+    end
+
     def mote_definition!(name, *motives)
       MoteDefinition.new self.mote_definition, name, *motives
     end

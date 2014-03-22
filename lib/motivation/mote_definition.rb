@@ -46,6 +46,10 @@ module Motivation
       @motives.has_key? name
     end
 
+    def scan_motive_instances(&block)
+      motives.reverse_each &block
+    end
+
     def mote(name)
       raise "Cannot get a mote reference (\"#{name}\") from a mote definition (did you mean to reference a motive?)"
     end
@@ -62,9 +66,9 @@ module Motivation
       raise "the roof"
     end
 
-    def add_mote_definition(mote_definition)
-      self.parent && self.parent.add_mote_definition(mote_definition)
-    end
+    # def add_mote_definition(mote_definition)
+    #   self.parent && self.parent.add_mote_definition(mote_definition)
+    # end
 
     def add_motive_instance(motive_instance)
       self.motives << motive_instance

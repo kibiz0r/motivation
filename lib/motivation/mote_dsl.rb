@@ -2,17 +2,9 @@ module Motivation
   module MoteDsl
     extend Forwardable
 
-    # DelegatedToMotivator = %w|
-    # |.map &:to_sym
-    # def_delegators :motivator, *DelegatedToMotivator
-
     def eval(&block)
       self.instance_eval &block
     end
-
-    # def motivator
-    #   self.parent && self.parent.motivator
-    # end
 
     def mote_definition!(name, *motives)
       MoteDefinition.new self.mote_definition, name, *motives
@@ -40,10 +32,6 @@ module Motivation
 
     def motive_reference_resolvable?(name)
       false
-    end
-
-    def add_mote_definition(mote_definition)
-      self.mote_definition.add_mote_definition mote_definition
     end
 
     def add_motive_instance(motive_instance)

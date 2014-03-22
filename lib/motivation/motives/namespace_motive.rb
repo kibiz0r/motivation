@@ -9,34 +9,12 @@ module Motivation
       end
 
       def resolve_self(mote)
-        mote.resolve_source_const self.namespace
+        mote.require_source_const self.namespace
       end
 
       def resolve_namespace_motive(mote, namespace_motive)
         mote.resolve_motive(self).const_get namespace_motive.namespace
       end
-
-      # def resolve
-      #   if self.parent.is_a?(Mote) && self.parent.parent[:namespace]
-      #     self.parent.parent[:namespace].resolve_namespace_motive self
-      #   else
-      #     resolve_self
-      #     # self.parent.require_source_const @namespace
-      #   end
-      # end
-
-      # def resolve_mote
-      #   resolve
-      # end
-
-      # def resolve_self
-      #   # Object.const_get self.namespace
-      #   self.parent.require_source_const self.namespace
-      # end
-
-      # def resolve_namespace_motive(namespace_motive)
-      #   resolve_self.const_get namespace_motive.namespace
-      # end
     end
   end
 end
