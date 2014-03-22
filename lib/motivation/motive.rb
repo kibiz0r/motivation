@@ -27,10 +27,11 @@ module Motivation
       mote.resolve_motive self, *args
     end
 
-    def resolve_motive(motive, *args)
+    def resolve_motive(mote, motive, *args)
       resolve_method = :"resolve_#{motive.class.name.demodulize.underscore}"
+      puts "trying to resolve via #{resolve_method}"
       if self.respond_to? resolve_method
-        self.send resolve_method, motive, *args
+        self.send resolve_method, mote, motive, *args
       else
       end
     end

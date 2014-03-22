@@ -12,6 +12,19 @@ module Motivation
       :require_source_const,
       *Motivator::Resolvers # TODO: resolve chain
 
+    # TODO: Remove refernces to Motivator and go through parent instead
+    # The root node will have the reference to Motivator and delegate this appropriately
+    # def_delegators :require_parent,
+    #   :mote_reference_identifier,
+    #   :mote_reference_resolver,
+    #   :motive_reference_identifier,
+    #   :motive_reference_resolver,
+    #   :mote_definition_resolver,
+    #   :mote_resolver,
+    #   :motive_instance_identifier,
+    #   :motive_instance_resolver,
+    #   :motive_resolver
+
     attr_reader :motivator, :definition
 
     def self.define(*args)
@@ -25,6 +38,7 @@ module Motivation
     end
 
     def parent
+      puts "trying to resolve parent for #{self}"
       if self.definition.parent
         self.motivator.resolve_mote_definition self.definition.parent
       end
@@ -52,6 +66,38 @@ module Motivation
       self.motivator.resolve_motive self, motive, *args, &block
     end
 
+    # def each_preceding_motive_instance(motive_instance, &block)
+    #   enum = self.definition.motives.take_while do |defined_instance|
+    #     defined_instance != motive_instance
+    #   end.reverse_each
+
+    #   if block_given?
+    #     enum.each &block
+    #   else
+    #     enum
+    #   end
+    # end
+
+    def preceding_motive_instances(motive_instance)
+      Enumerator.new do |preceding_instances|
+        self.definition.motives.take_while do |defined_instance|
+          defined_instance != motive_instance
+        end.reverse_each do |preceding_instance|
+          preceding_instances << preceding_instance
+        end
+      end
+    end
+
+    def identify_motive_instance(motive_instance)
+      self.motivator.identify_motive_instance motive_instance
+    end
+
+    def identify_preceding_motive_instances(motive_instance)
+      self.each_preceding_motive_instance motive_instance do |preceding_motive_instance|
+        self.identify_motive_instance preceding_motive_instance
+      end
+    end
+
     def [](motive_name)
       motive_name = motive_name.to_sym
       motive_instance = self.definition.motives.reverse_each.find do |motive_instance|
@@ -69,10 +115,7 @@ module Motivation
     end
 
     def to_s
-      parts = [
-        ":#{self.name}"
-      ]
-      "#{self.context}: mote(#{parts.join ", "}) source: #{self.definition}"
+      "Mote(#{self.definition})"
     end
 
     def method_missing(motive_name, *args, &block)

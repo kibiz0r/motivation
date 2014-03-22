@@ -1,50 +1,32 @@
 module Motivation
   class MotiveResolver
-    def resolve_reference(motivator, motive_reference)
-      motive_class = motivator.motive_definition motive_reference.name
-      motive_class.new(*motive_reference.args).tap do |motive|
-        motive.args = motive_reference.args
-      end
-    end
-
-    def resolve_motive_reference(mote, motive_reference)
-      mote.motivator.motive_definition(motive_reference.name).new mote, *motive_reference.args
-    end
-
+    # The simple case here is that we're trying to resolve a Motive attached to the root Mote
+    #   In that case, we just need to find if there are any MotiveInstances that would prefer to resolve our target Motive
+    #   If there are, then we ask the Mote to resolve them (which probably just triggers this same process)
+    #     And then we ask the resolved Motive to resolve our target Motive
+    #   Otherwise, we just tell it to resolve itself
+    #
+    # The next case is that we're trying to resolve a Motive attached to a child of the root Mote
+    #   We still need to find if there are any Motives that would prefer to resolve us
+    #   If there are, then we ask the Mote to resolve them (which probably just triggers this same process)
+    #     And then we ask the resolved Motive to resolve our target Motive
+    #   Otherwise, we ask the root Mote to resolve our target Motive
     def resolve_motive(mote, motive, *args)
-      if mote_definition = motive.instance.parent
-        # find the earliest match for this motive, and starting there...
-        motives = mote_definition.motives
-        starting_index = motives.find_index do |motive_instance|
-          motive_instance == motive.instance
-        end  || motives.size
+      mote.preceding_motive_instances(motive.instance).each do |preceding_motive_instance|
+        preceding_motive_definition = mote.identify_motive_instance preceding_motive_instance
 
-        # scan backwards through motive instances for something that resolves this motive definition
-        overriding_motive_instance = mote_definition.motives[0...starting_index].reverse_each.find do |motive_instance|
-          motive_definition(mote, motive_instance).can_resolve_motive_with_definition? motive.definition
-        end
+        if preceding_motive_definition.can_resolve_motive_with_definition? motive.definition
+          preceding_motive = mote.resolve_motive_instance preceding_motive_instance
 
-        if overriding_motive_instance
-          puts "overriding resolution of #{motive} with #{overriding_motive_instance}"
-          overriding_motive = mote.resolve_motive_instance overriding_motive_instance
-          overriding_motive.resolve_namespace_motive mote, motive
-        elsif mote.parent.is_a? Mote
-          puts "resolving motive via parent mote"
-          resolve_motive mote.parent, motive
-        else
-          puts "Telling #{motive} to resolve itself"
-          binding.pry
-          motive.resolve_self mote
+          return preceding_motive.resolve_motive mote, motive, *args
         end
-      else
-        motive.resolve_self *args
       end
-    end
 
-    private
+      if mote.parent
+        return mote.parent.resolve_motive motive, *args
+      end
 
-    def motive_definition(mote, motive_instance)
-      mote.resolve_motive_definition_name motive_instance.name
+      return motive.resolve_self mote, *args
     end
   end
 end

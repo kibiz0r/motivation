@@ -26,6 +26,7 @@ motivation/motives/namespace_motive.rb
 motivation/motives/new_motive.rb
 motivation/motives/needs_motive.rb
 motivation/motives/project_motive.rb
+motivation/motives/context_motive.rb
 |
 
   class << self

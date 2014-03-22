@@ -29,6 +29,7 @@ module Motivation
 
       @mote_definitions = {}
 
+      # @root_mote = RootMote.new self, root_mote_definition
       @root_mote = Mote.new self, root_mote_definition
 
       self.eval &eval_block if block_given?
@@ -46,16 +47,21 @@ module Motivation
       self.motive_instance_resolver.resolve_motive_instance mote, motive_instance
     end
 
-    def resolve_motive_definition_name(motive_definition_name)
-      self.require_source_const("#{motive_definition_name}_motive")
-    end
-
     def resolve_motive(mote, motive, *args)
       self.motive_resolver.resolve_motive mote, motive, *args
     end
 
+    def resolve_motive_instance_definition(motive_instance)
+      self.resolve_motive_definition_name motive_instance.name
+    end
+
+    # motive_instance_identifiable?
     def motive_definition_name_resolvable?(motive_definition_name)
       self.source_const? "#{motive_definition_name}_motive"
+    end
+
+    def identify_motive_instance(motive_instance)
+      self.require_source_const("#{motive_instance.name}_motive")
     end
 
     def [](mote_name)

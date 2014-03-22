@@ -15,7 +15,7 @@ module Motivation
       # But MoteDefinitions can delegate to MotiveInstances,
       # so that means that we must find the definition of every MotiveInstance before us
       # and instantiate them if they implement #resolve_motive_instance
-      if definition = mote.resolve_motive_definition_name(motive_instance.name)
+      if definition = mote.identify_motive_instance(motive_instance)
         definition.new motive_instance, *motive_instance.args
       else
         binding.pry
