@@ -65,6 +65,10 @@ module Motivation
     def self.can_resolve_motive_with_definition?(motive_definition)
       self.instance_methods.include? :"resolve_#{motive_definition.motive_definition_name}"
     end
+
+    def self.can_identify_motive_instances?
+      self.instance_methods.include? :identify_motive_instance
+    end
   end
 end
 

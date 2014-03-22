@@ -1,48 +1,53 @@
 module Motivation
   class Mote
-    # include MoteDsl
+    class NoParent
+      def initialize(mote)
+        @mote = mote
+      end
+
+      def method_missing(method_name, *args, &block)
+        raise "Mote #{@mote} must have a parent in order to call #{method_name}"
+      end
+    end
 
     extend Forwardable
 
-    # Should these use a resolve chain?
-    def_delegators :definition, :name
-
-    # def_delegators :motivator, :source_const, :require_source_const
-    def_delegators :motivator,
-      :require_source_const,
-      *Motivator::Resolvers # TODO: resolve chain
-
     # TODO: Remove refernces to Motivator and go through parent instead
     # The root node will have the reference to Motivator and delegate this appropriately
-    # def_delegators :require_parent,
-    #   :mote_reference_identifier,
-    #   :mote_reference_resolver,
-    #   :motive_reference_identifier,
-    #   :motive_reference_resolver,
-    #   :mote_definition_resolver,
-    #   :mote_resolver,
-    #   :motive_instance_identifier,
-    #   :motive_instance_resolver,
-    #   :motive_resolver
+    def_delegators :require_parent,
+      :mote_reference_identifier,
+      :mote_reference_resolver,
+      :motive_reference_identifier,
+      :motive_reference_resolver,
+      :mote_definition_resolver,
+      :mote_resolver,
+      :motive_instance_identifier,
+      :motive_instance_resolver,
+      :motive_resolver,
+      :source_constant_resolver
 
-    attr_reader :motivator, :definition
+    attr_reader :parent, :definition
 
     def self.define(*args)
       parent, name = args.slice! 0, args.find_index { |a| a.is_a? MotiveInstance } || 0
       MoteDefinition.new parent, name, *args
     end
 
-    def initialize(motivator, definition)
-      @motivator = motivator
+    def initialize(parent, definition)
+      @parent = parent
       @definition = definition
     end
 
-    def parent
-      puts "trying to resolve parent for #{self}"
-      if self.definition.parent
-        self.motivator.resolve_mote_definition self.definition.parent
-      end
+    def require_parent
+      parent || NoParent.new
     end
+
+    # def parent
+    #   puts "trying to resolve parent for #{self}"
+    #   if self.definition.parent
+    #     self.motivator.resolve_mote_definition self.definition.parent
+    #   end
+    # end
 
     def motive_name(motive)
       self.motive_instances.reverse_each.find do |motive_instance|
@@ -59,43 +64,29 @@ module Motivation
     end
 
     def resolve_motive_instance(motive_instance)
-      self.motivator.resolve_motive_instance self, motive_instance
+      motive_instance_resolver.resolve_motive_instance self, motive_instance
     end
 
-    def resolve_motive(motive, *args, &block)
-      self.motivator.resolve_motive self, motive, *args, &block
+    def resolve_motive(motive, *args)
+      motive_resolver.resolve_motive self, motive, *args
     end
 
-    # def each_preceding_motive_instance(motive_instance, &block)
-    #   enum = self.definition.motives.take_while do |defined_instance|
-    #     defined_instance != motive_instance
-    #   end.reverse_each
+    def scan_motive_instances(&block)
+      motive_instances.reverse_each &block
+    end
 
-    #   if block_given?
-    #     enum.each &block
-    #   else
-    #     enum
-    #   end
-    # end
-
-    def preceding_motive_instances(motive_instance)
-      Enumerator.new do |preceding_instances|
-        self.definition.motives.take_while do |defined_instance|
-          defined_instance != motive_instance
-        end.reverse_each do |preceding_instance|
-          preceding_instances << preceding_instance
-        end
-      end
+    def scan_preceding_motive_instances(motive_instance, &block)
+      motive_instances.take_while do |defined_instance|
+        defined_instance != motive_instance
+      end.reverse_each &block
     end
 
     def identify_motive_instance(motive_instance)
-      self.motivator.identify_motive_instance motive_instance
+      motive_instance_identifier.identify_motive_instance self, motive_instance
     end
 
-    def identify_preceding_motive_instances(motive_instance)
-      self.each_preceding_motive_instance motive_instance do |preceding_motive_instance|
-        self.identify_motive_instance preceding_motive_instance
-      end
+    def resolve_source_const(const_name)
+      source_constant_resolver.resolve_source_const self, const_name
     end
 
     def [](motive_name)

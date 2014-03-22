@@ -9,7 +9,7 @@ module Motivation
       end
 
       def resolve_self(mote)
-        mote.require_source_const self.namespace
+        mote.resolve_source_const self.namespace
       end
 
       def resolve_namespace_motive(mote, namespace_motive)

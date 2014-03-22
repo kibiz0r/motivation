@@ -12,7 +12,7 @@ module Motivation
     #     And then we ask the resolved Motive to resolve our target Motive
     #   Otherwise, we ask the root Mote to resolve our target Motive
     def resolve_motive(mote, motive, *args)
-      mote.preceding_motive_instances(motive.instance).each do |preceding_motive_instance|
+      mote.scan_preceding_motive_instances motive.instance do |preceding_motive_instance|
         preceding_motive_definition = mote.identify_motive_instance preceding_motive_instance
 
         if preceding_motive_definition.can_resolve_motive_with_definition? motive.definition
@@ -23,6 +23,7 @@ module Motivation
       end
 
       if mote.parent
+        puts "resolving via parent #{mote.parent}"
         return mote.parent.resolve_motive motive, *args
       end
 

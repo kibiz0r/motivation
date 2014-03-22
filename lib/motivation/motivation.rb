@@ -16,6 +16,8 @@ motivation/mote_resolver.rb
 motivation/motive_resolver.rb
 motivation/mote_definition_resolver.rb
 motivation/motive_instance_resolver.rb
+motivation/motive_instance_identifier.rb
+motivation/source_constant_resolver.rb
 
 motivation/motivator.rb
 motivation/mote.rb

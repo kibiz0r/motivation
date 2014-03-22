@@ -47,8 +47,8 @@ module Motivation
       self.motive_instance_resolver.resolve_motive_instance mote, motive_instance
     end
 
-    def resolve_motive(mote, motive, *args)
-      self.motive_resolver.resolve_motive mote, motive, *args
+    def resolve_motive(motive, *args)
+      motive.resolve_self root_mote, *args
     end
 
     def resolve_motive_instance_definition(motive_instance)
@@ -62,6 +62,14 @@ module Motivation
 
     def identify_motive_instance(motive_instance)
       self.require_source_const("#{motive_instance.name}_motive")
+    end
+
+    def motive_instance_identifier
+      require_source_const(:motive_instance_identifier).new
+    end
+
+    def source_constant_resolver
+      require_source_const(:source_constant_resolver).new self
     end
 
     def [](mote_name)
