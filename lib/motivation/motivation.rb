@@ -56,24 +56,9 @@ motivation/class_ext.rb
 
   class << self
     attr_writer :motivator
-    attr_accessor :root_mote_definition, :source_modules
 
     def motivator
-      @motivator ||= Motivator.new(root_mote_definition, *source_modules)
-    end
-
-    def root_mote_definition
-      unless @root_mote_definition
-        motivation
-      end
-      @root_mote_definition
-    end
-
-    def source_modules
-      unless @source_modules
-        motivation
-      end
-      @source_modules
+      @motivator ||= Motivator.new
     end
 
     def method_missing(method_name, *args, &block)
@@ -103,25 +88,10 @@ motivation/class_ext.rb
 
     def eval(string = nil, &block)
       if string
-        instance_eval string, __FILE__, __LINE__
+        motivator.eval string
       elsif block_given?
-        instance_eval &block
+        motivator.eval &block
       end
-
-      self
-    end
-
-    def motivation(*args)
-      if args.empty?
-        args = DefaultMotivationArgs
-      end
-
-      @root_mote_definition_spec = args.slice! 0, args.find_index { |a| a.is_a? Module } || 0
-      motive_instances = @root_mote_definition_spec.map do |motive_instance_spec| 
-        Motive.instance *motive_instance_spec
-      end
-      @root_mote_definition = Mote.define nil, motive_instances
-      @source_modules = args
 
       self
     end

@@ -21,7 +21,20 @@ module Motivation
       :source_const,
       :source_const?
 
-    # def_delegators :root_mote, :[], :eval
+    def root_mote_definition
+      unless @root_mote_definition
+        motivation
+      end
+      @root_mote_definition
+    end
+
+    def source_modules
+      unless @source_modules
+        motivation
+      end
+      @source_modules
+    end
+
     def eval(string = nil, &block)
       if string
         MoteBlock.new(self, root_mote.definition).eval string
@@ -31,23 +44,42 @@ module Motivation
       self
     end
 
-    def initialize(root_mote_definition, *source_modules, &eval_block)
-      source_consts = Hash[source_modules.extract_options!.map { |k, v| [k.to_sym, v] }]
-      source_modules = source_modules
-
-      @source_constant_resolver = SourceConstantResolver.new source_modules, source_consts
-
-      Resolvers.each do |resolver|
-        instance_variable_set :"@#{resolver}", require_source_const(resolver).new
+    def motivation(*args)
+      if args.empty?
+        args = DefaultMotivationArgs
       end
 
-      @root_mote = Mote.new self, root_mote_definition
+      root_mote_definition_spec = args.slice! 0, args.find_index { |a| a.is_a? Module } || 0
+      motive_instances = root_mote_definition_spec.map do |motive_instance_spec| 
+        Motive.instance *motive_instance_spec
+      end
+      @root_mote_definition = Mote.define nil, motive_instances
+      @source_consts = Hash[args.extract_options!.map { |k, v| [k.to_sym, v] }]
+      @source_modules = args
 
-      self.eval &eval_block if block_given?
+      self
+    end
+
+    def initialize
+    end
+
+    Resolvers.each do |resolver|
+      define_method :"#{resolver}" do
+        instance_variable_get :"@#{resolver}" or
+          instance_variable_set :"@#{resolver}", require_source_const(resolver).new
+      end
+    end
+
+    def source_constant_resolver
+      @source_constant_resolver ||= SourceConstantResolver.new @source_modules, @source_consts
     end
 
     def motivator
       self
+    end
+
+    def root_mote
+      @root_mote ||= Mote.new self, root_mote_definition
     end
 
     def resolve_mote_definition(mote_definition)
