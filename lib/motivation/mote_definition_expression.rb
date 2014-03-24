@@ -43,22 +43,15 @@ module Motivation
         name.chop!
       end
 
-      if invocation
-        self.mote_definition!(name, *args).tap do |mote_definition|
-          self.add_mote_definition mote_definition
-          self.eval_mote_block mote_definition, &block if block_given?
+      if !invocation and self.motive_instance_resolvable? name
+        self.motive_instance!(name, *args).tap do |motive_instance|
+          self.add_motive_instance motive_instance
         end
-      else
-        if self.motive_instance_resolvable? name
-          self.motive_instance!(name, *args).tap do |motive_instance|
-            self.add_motive_instance motive_instance
-          end
-          self.eval_mote_block self.mote_definition, &block if block_given?
-        else
-          validate_mote_name! name
-          self.mote_reference name
-        end
+        self.eval_mote_block self.mote_definition, &block if block_given?
+        return self
       end
+
+      raise "Unknown Motive Definition \"#{method_name}\""
     end
   end
 end

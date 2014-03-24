@@ -5,6 +5,8 @@ require 'bundler'
 Bundler.require
 require 'rspec/core/rake_task'
 require 'bubble-wrap/test'
+require 'cucumber/rake/task'
+
 
 class Rake::Task
   def delete
@@ -37,6 +39,10 @@ require 'bundler/gem_tasks'
   end
 end
 
+Cucumber::Rake::Task.new :features  do |t|
+  t.cucumber_opts = "features --format pretty"
+end
+
 # desc "Run motion specs"
 # task 'spec:motion' do
 #   App.config.spec_mode = true
@@ -46,11 +52,6 @@ end
 # 
 # desc "Run all specs"
 # task :spec => ['spec:ruby', 'spec:motion']
-
-desc "Run all cucumbers"
-task :cucumber => 'build:simulator' do
-  sh "vendor/bin/cucumber features/"
-end
 
 task(:default).delete
 task :default => ['spec:ruby', 'cucumber']

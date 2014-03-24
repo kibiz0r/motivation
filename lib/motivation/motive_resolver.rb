@@ -22,8 +22,8 @@ module Motivation
         end
       end
 
-      if mote.parent
-        return mote.parent.resolve_motive motive, *args
+      if parent_mote = mote.parent && parent_mote.can_resolve_motives?
+        return parent_mote.resolve_motive motive, *args
       end
 
       return motive.resolve_self mote, *args

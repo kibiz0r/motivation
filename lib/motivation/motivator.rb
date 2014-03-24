@@ -4,8 +4,10 @@ module Motivation
 
     Resolvers = %w|
     mote_resolver
+    mote_value_resolver
     motive_resolver
     mote_definition_resolver
+    mote_reference_resolver
     motive_instance_resolver
     mote_definition_adder
     |.map &:to_sym
@@ -20,8 +22,12 @@ module Motivation
       :source_const?
 
     # def_delegators :root_mote, :[], :eval
-    def eval(&block)
-      MoteBlock.new(self, root_mote.definition).eval &block
+    def eval(string = nil, &block)
+      if string
+        MoteBlock.new(self, root_mote.definition).eval string
+      elsif block_given?
+        MoteBlock.new(self, root_mote.definition).eval &block
+      end
       self
     end
 
@@ -58,19 +64,27 @@ module Motivation
     # end
 
     def resolve_motive(motive, *args)
-      motive.resolve_self root_mote, *args
+      # motive.resolve_self root_mote, *args
+    end
+
+    def can_resolve_motives?
+      false
+    end
+
+    def can_resolve_mote_definitions?
+      false
+    end
+
+    def can_find_mote_definitions?
+      false
+    end
+
+    def can_resolve_motes?
+      false
     end
 
     def resolve_motive_instance_definition(motive_instance)
       resolve_motive_definition_name motive_instance.name
-    end
-
-    def find_mote_definition(mote_definition_name)
-      nil
-    end
-
-    def find_motive_instance(motive_instance_name)
-      nil
     end
 
     # motive_instance_identifiable?
@@ -94,9 +108,17 @@ module Motivation
       require_source_const(:mote_definition_finder).new
     end
 
+    def mote_value_resolver
+      require_source_const(:mote_value_resolver).new
+    end
+
     def [](mote_name)
       root_mote[mote_name]
     end
+
+    # def method_missing(method_name, *args, &block)
+    #   root_mote.send method_name, *args, &block
+    # end
 
     # def motive_defined?(name)
     #   !source_const("#{name.to_s.camelize}Motive").nil?

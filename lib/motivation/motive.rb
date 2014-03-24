@@ -38,35 +38,44 @@ module Motivation
       "#{self.class.name}(#{self.args.map(&:to_s).join(", ")})"
     end
 
-    def self.instance(*args)
-      name_index = args.find_index { |a| a.is_a? Symbol }
-      if args.first.is_a? Symbol
-        parent = nil
-        name = args.shift
-      else
-        parent, name = args.slice! 0, 2
+    class << self
+      def instance(*args)
+        if args.first.is_a? Symbol
+          parent = nil
+          name = args.shift
+        else
+          parent, name = args.slice! 0, 2
+        end
+        MotiveInstance.new parent, name, *args
       end
-      MotiveInstance.new parent, name, *args
-    end
 
-    def self.resolution_name
-      self.name.demodulize.underscore
-    end
+      def resolution_name
+        name.demodulize.underscore
+      end
 
-    def self.can_resolve_motive_with_definition?(motive_definition)
-      self.instance_methods.include? :"resolve_#{motive_definition.resolution_name}"
-    end
+      def can_resolve_motive_with_definition?(motive_definition)
+        instance_methods.include? :"resolve_#{motive_definition.resolution_name}"
+      end
 
-    def self.can_identify_motive_instances?
-      self.instance_methods.include? :identify_motive_instance
-    end
+      def can_identify_motive_instances?
+        instance_methods.include? :identify_motive_instance
+      end
 
-    def self.can_find_mote_definitions?
-      self.instance_methods.include? :find_mote_definition
-    end
+      def can_find_mote_definitions?
+        instance_methods.include? :find_mote_definition
+      end
 
-    def self.can_add_mote_definitions?
-      self.instance_methods.include? :add_mote_definition
+      def can_add_mote_definitions?
+        instance_methods.include? :add_mote_definition
+      end
+
+      def can_resolve_mote_definitions?
+        instance_methods.include? :resolve_mote_definition
+      end
+
+      def can_resolve_motes?
+        instance_methods.include? :resolve_mote
+      end
     end
   end
 end

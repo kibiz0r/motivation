@@ -7,8 +7,10 @@ module Motivation
         end
       end
 
-      if mote.parent
-        return mote.parent.find_motive_instance motive_instance_name
+      if parent = mote.parent
+        if parent.respond_to? :find_motive_instance
+          return parent.find_motive_instance motive_instance_name
+        end
       end
 
       nil

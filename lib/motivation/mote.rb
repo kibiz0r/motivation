@@ -6,7 +6,7 @@ module Motivation
       end
 
       def method_missing(method_name, *args, &block)
-        raise "Mote #{@mote} must have a parent in order to call #{method_name}"
+        raise "#{@mote} must have a parent in order to call #{method_name}"
       end
     end
 
@@ -19,6 +19,7 @@ module Motivation
       :motive_reference_resolver,
       :mote_definition_resolver,
       :mote_resolver,
+      :mote_value_resolver,
       :motive_instance_identifier,
       :motive_instance_resolver,
       :motive_resolver,
@@ -34,8 +35,23 @@ module Motivation
     attr_reader :parent, :definition
 
     def self.define(*args)
-      parent, name = args.slice! 0, args.find_index { |a| a.is_a? MotiveInstance } || 0
+      parent = nil
+
+      if args.first.is_a? MoteDefinition
+        parent, name = args.slice! 0, 2
+      else
+        name = args.shift
+      end
+
       MoteDefinition.new parent, name, *args
+    end
+
+    def self.reference(*args)
+      if args.first.is_a? String or args.first.is_a? Symbol
+        MoteReference.new nil, *args
+      else
+        MoteReference.new *args
+      end
     end
 
     def initialize(parent, definition)
@@ -48,22 +64,16 @@ module Motivation
       parent || NoParent.new(self)
     end
 
-    def motive_name(motive)
-      self.motive_instances.reverse_each.find do |motive_instance|
-        motive_instance.definition == motive.definition
-      end
-    end
-
     def motive_instances
       self.definition.motives
     end
 
     def resolve_mote_definition(mote_definition)
-      if definition == mote_definition
-        self
-      else
-        mote_definition_resolver.resolve_mote_definition self, mote_definition
-      end
+      mote_definition_resolver.resolve_mote_definition self, mote_definition
+    end
+
+    def resolve_mote_reference(mote_reference)
+      mote_reference_resolver.resolve_mote_reference self, mote_reference
     end
 
     def find_mote_definition(mote_definition_name)
@@ -86,6 +96,34 @@ module Motivation
 
     def resolve_motive(motive, *args)
       motive_resolver.resolve_motive self, motive, *args
+    end
+
+    def resolve_value
+      mote_value_resolver.resolve_mote_value self
+    end
+
+    def resolve(*args)
+      resolve_mote self, *args
+    end
+
+    def resolve_mote(mote, *args)
+      mote_resolver.resolve_mote self, mote, *args
+    end
+
+    def can_resolve_motes?
+      respond_to? :resolve_mote
+    end
+
+    def can_resolve_motives?
+      respond_to? :resolve_motive
+    end
+
+    def can_resolve_mote_definitions?
+      respond_to? :resolve_mote_definition
+    end
+
+    def can_find_mote_definitions?
+      respond_to? :find_mote_definition
     end
 
     def scan_motive_instances(&block)

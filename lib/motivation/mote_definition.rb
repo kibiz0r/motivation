@@ -4,30 +4,34 @@ module Motivation
     include MoteDsl
 
     attr_accessor :parent
-    attr_reader :name, :motives
+    attr_reader :name, :motives, :value, :template
 
-    def initialize(parent, name, *motives)
+    # TODO: Can probably turn value and template functionality into ValueMotive and TemplateMotive
+    # and just automatically attach appropriate MotiveInstances in the constructor
+    def initialize(parent, name, *value_or_template_and_motives)
       self.parent = parent
       @name = name.to_sym if name
-      @motives = motives
-      motives.each do |motive|
+
+      @motives = []
+      if value_or_template_and_motives.any?
+        if !value_or_template_and_motives.last.is_a?(MotiveInstance)
+          value_or_template = value_or_template_and_motives.pop
+          @motives = value_or_template_and_motives
+
+          if value_or_template.is_a? MoteReference# or value_or_template.is_a? MotiveReference
+            @motives << Motive.instance(:template, value_or_template)
+          else
+            @motives << Motive.instance(:value, value_or_template)
+          end
+        else
+          @motives = value_or_template_and_motives
+        end
+      end
+
+      @motives.each do |motive|
         motive.parent = self
       end
     end
-
-    # def resolve
-    #   self.motivator.resolve_mote_definition self
-    # end
-
-    # def resolve_motive_definition(motive_definition_name)
-    #   # This is where we should look up any renaming of motives
-    #   #   e.g. my_mote! module_name: namespace("Foo")
-    #   self.motivator.resolve_motive_definition_name motive_definition_name
-    # end
-
-    # def motivator
-    #   self.parent && self.parent.motivator
-    # end
 
     def motive(name, *args)
       name = name.to_sym
@@ -50,40 +54,16 @@ module Motivation
       motives.reverse_each &block
     end
 
-    def mote(name)
-      raise "Cannot get a mote reference (\"#{name}\") from a mote definition (did you mean to reference a motive?)"
-    end
-
     def mote_definition
       self
     end
-
-    def motive_instance_resolvable?(name)
-      raise "the roof"
-    end
-
-    def motive_reference_resolvable?(name)
-      raise "the roof"
-    end
-
-    # def add_mote_definition(mote_definition)
-    #   self.parent && self.parent.add_mote_definition(mote_definition)
-    # end
 
     def add_motive_instance(motive_instance)
       self.motives << motive_instance
     end
 
-    def eval_motive_block(motive_instance, &block)
-      raise "Mote definitions can't eval Motive blocks"
-    end
-
     def to_s
-      parts = [
-        ":#{name}",
-        motives.map(&:to_s).join(", ")
-      ].reject &:blank?
-      "#{parent}.mote_definition!(#{parts.join ", "})"
+      "MoteDefinition(#{[parent, name, *motives].compact.map(&:to_s).join ", "})"
     end
 
     def ==(other)

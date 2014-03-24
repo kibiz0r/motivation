@@ -2,8 +2,12 @@ module Motivation
   module MoteDsl
     extend Forwardable
 
-    def eval(&block)
-      self.instance_eval &block
+    def eval(string = nil, &block)
+      if string
+        self.instance_eval string, __FILE__, __LINE__
+      elsif block_given?
+        self.instance_eval &block
+      end
     end
 
     def mote_definition!(name, *motives)
@@ -38,38 +42,10 @@ module Motivation
       nil
     end
 
-    # def mote(name, *motives)
-    #   MoteReference.new self, name, *motives
-    # end
-
-    # def motive(name, *args)
-    #   MotiveReference.new self, name, *args
-    # end
-
-    # def eval_mote_block(mote, &block)
-    #   MoteBlock.new(self, mote).eval &block
-    # end
-
-    # def eval_motive_block(motive, &block)
-    #   MotiveBlock.new(self, motive).eval &block
-    # end
-
-    # parent_mote!.namespace.constant do
-    #   my_mote!
-    # end
-    # my_mote.parent == parent_mote
-
-    # def method_missing(method_name, *args, &block)
-    #   puts method_name
-    # rescue => e
-    #   puts "problem handling #{self}.#{method_name}: #{e}\n#{e.backtrace.join "\n"}"
-    #   super method_name.to_sym, *args, &block
-    # end
-  end
-
-  def validate_mote_name!(mote_name)
-    if %w|to_ary|.include? mote_name.to_s
-      raise "Invalid mote name: \"#{mote_name}\""
+    def validate_mote_name!(mote_name)
+      if %w|to_ary|.include? mote_name.to_s
+        raise "Invalid mote name: \"#{mote_name}\""
+      end
     end
   end
 end

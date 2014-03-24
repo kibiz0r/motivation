@@ -13,8 +13,8 @@ module Motivation
         end
       end
 
-      if mote.parent
-        return mote.parent.find_mote_definition mote_definition_name
+      if parent_mote = mote.parent and parent_mote.can_find_mote_definitions?
+        return parent_mote.find_mote_definition mote_definition_name
       end
 
       nil

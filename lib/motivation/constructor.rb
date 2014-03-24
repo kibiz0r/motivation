@@ -1,3 +1,17 @@
+module Motivation
+  module Constructor
+    def constructor(*constructor_args)
+      @constructor_args = constructor_args
+      define_singleton_method :new do |*new_args|
+        raise "Wrong number of arguments to new -- expected #{@constructor_args.size}, got #{new_args.size}"
+        constructor_args.zip new_args do |constructor_arg, new_arg|
+          instance_variable_set :"@#{constructor_arg}", new_arg
+        end
+      end
+    end
+  end
+end
+
 # module Motivation
 #   module Constructor
 #     def constructor(*dependencies)
