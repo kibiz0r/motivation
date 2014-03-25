@@ -25,6 +25,10 @@ task(:build).delete
 
 require 'bundler/gem_tasks'
 
+task :docs do
+  system "docco", *Dir.glob("lib/motivation/**/*.rb")
+end
+
 %w(lib).tap do |dirs|
   dirs.each do |dir|
     desc "Run #{dir} specs"

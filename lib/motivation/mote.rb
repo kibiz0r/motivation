@@ -1,39 +1,19 @@
+# Motes are the main entry point into the resolved world of Motivation.
+#
+# They straddle the line between the resolved tree of Motes and Motives
+# and the unresolved tree of MoteDefinitions and MotiveInstances.
+#
+# Motes are created by their parents resolving a MoteDefinition. Because of this,
+# if you want to define a new Mote, you should pass a MoteDefinition to add_mote_definition
+# and then call resolve_mote_definition.
+#
+# Motes themselves really have no state; they're just an interface to resolving things.
 module Motivation
   class Mote
-    class NoParent
-      def initialize(mote)
-        @mote = mote
-      end
-
-      def method_missing(method_name, *args, &block)
-        raise "#{@mote} must have a parent in order to call #{method_name}"
-      end
-    end
-
     extend Forwardable
 
-    def_delegators :require_parent,
-      :mote_reference_identifier,
-      :mote_reference_resolver,
-      :motive_reference_identifier,
-      :motive_reference_resolver,
-      :mote_definition_resolver,
-      :mote_resolver,
-      :mote_value_resolver,
-      :motive_instance_identifier,
-      :motive_instance_resolver,
-      :motive_resolver,
-      :source_constant_resolver,
-      :mote_definition_finder,
-      :motive_instance_finder
-
-    def_delegators :source_constant_resolver,
-      :require_source_const,
-      :source_const,
-      :source_const?
-
-    attr_reader :parent, :definition
-
+    # To define a Mote, you need to specify at least a name, preferably a parent,
+    # and optionally a splat of MotiveInstances.
     def self.define(*args)
       parent = nil
 
@@ -46,6 +26,8 @@ module Motivation
       MoteDefinition.new parent, name, *args
     end
 
+    # To create a reference to a Mote, that can be resolved to a Mote on-demand,
+    # you need a name and preferably a parent. You can also provide args to the resolution.
     def self.reference(*args)
       if args.first.is_a? String or args.first.is_a? Symbol
         MoteReference.new nil, *args
@@ -54,20 +36,61 @@ module Motivation
       end
     end
 
+    # You can ask for a Mote or Motive with [].
+    # Doing so will walk the Mote tree back to the root *twice*, consulting the Motives attached to each Mote both times.
+    #
+    # - First, asking for a MotiveInstance by name.
+    # - Second, asking for a MoteDefinition by name.
+    #
+    # To be honest, it should probably just search for both simultaneously.
+    #
+    # There's no reason to walk the tree twice, and if a MoteDefinition is meant to eclipse a Motive, it should be able to.
+    def [](mote_or_motive_name)
+      if motive_instance = find_motive_instance(mote_or_motive_name)
+        return resolve_motive_instance motive_instance
+      end
+
+      if mote_definition = find_mote_definition(mote_or_motive_name)
+        return resolve_mote_definition mote_definition
+      end
+      
+      nil
+    end
+
+    # By default, invoking something on a Mote resolves whatever is returned from [].
+    def method_missing(mote_or_motive_name, *args, &block)
+      if mote_or_motive = self[mote_or_motive_name]
+        resolve_mote_or_motive mote_or_motive, *args, &block
+      else
+        super mote_or_motive_name, *args, &block
+      end
+    end
+
+    # To create a Mote, you need:
+    #
+    # - A parent to interact with the Motes above it,
+    # which gives a window into the (partially) resolved state of the tree,
+    # and also provide Identifiers, Resolvers, and Finders.
+    #
+    # - A definition, which identifies the Mote in the original, stateless tree.
+    # The definition provides a parent definition, a name, and the requested MotiveInstances.
+    #
+    # The Mote will memoize the concrete Motives that it resolves out of its definition's MotiveInstances,
+    # so you always get the same Motive back from [] or method_missing.
     def initialize(parent, definition)
       @parent = parent
       @definition = definition
       @motives = {}
     end
 
-    def require_parent
-      parent || NoParent.new(self)
-    end
+    attr_reader :parent, :definition
 
     def motive_instances
       self.definition.motives
     end
 
+    # To resolve nodes from the definition tree, the Mote uses the Resolver provided by its parent
+    # and passes itself to identify the context for resolution.
     def resolve_mote_definition(mote_definition)
       mote_definition_resolver.resolve_mote_definition self, mote_definition
     end
@@ -140,18 +163,6 @@ module Motivation
       motive_instance_identifier.identify_motive_instance self, motive_instance
     end
 
-    def [](mote_or_motive_name)
-      if motive_instance = find_motive_instance(mote_or_motive_name)
-        return resolve_motive_instance motive_instance
-      end
-
-      if mote_definition = find_mote_definition(mote_or_motive_name)
-        return resolve_mote_definition mote_definition
-      end
-      
-      raise "No such mote or motive: #{mote_or_motive_name}"
-    end
-
     def ==(other)
       other.is_a?(Mote) &&
         self.motivator == other.motivator &&
@@ -162,12 +173,41 @@ module Motivation
       "Mote(#{self.definition})"
     end
 
-    def method_missing(motive_name, *args, &block)
-      if motive = self[motive_name]
-        resolve_motive motive, *args, &block
-      else
-        raise "No such motive: #{motive_name}"
+    def_delegators :source_constant_resolver,
+      :require_source_const,
+      :source_const,
+      :source_const?
+
+    # Motes must have a parent in order to walk the tree.
+    # Identifiers, Resolvers, and Finders are all provided by the Motivator,
+    # or any parent Mote that explicitly provides one.
+    def_delegators :require_parent,
+      :mote_reference_identifier,
+      :mote_reference_resolver,
+      :motive_reference_identifier,
+      :motive_reference_resolver,
+      :mote_definition_resolver,
+      :mote_resolver,
+      :mote_value_resolver,
+      :motive_instance_identifier,
+      :motive_instance_resolver,
+      :motive_resolver,
+      :source_constant_resolver,
+      :mote_definition_finder,
+      :motive_instance_finder
+
+    class NoParent
+      def initialize(mote)
+        @mote = mote
       end
+
+      def method_missing(method_name, *args, &block)
+        raise "#{@mote} must have a parent in order to call #{method_name}"
+      end
+    end
+
+    def require_parent
+      parent || NoParent.new(self)
     end
   end
 end

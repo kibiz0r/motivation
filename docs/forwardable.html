@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>forwardable.rb</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="class_ext.html">
+                class_ext.rb
+              </a>
+            
+              
+              <a class="source" href="constructor.html">
+                constructor.rb
+              </a>
+            
+              
+              <a class="source" href="mote.html">
+                mote.rb
+              </a>
+            
+              
+              <a class="source" href="mote_block.html">
+                mote_block.rb
+              </a>
+            
+              
+              <a class="source" href="mote_definition.html">
+                mote_definition.rb
+              </a>
+            
+              
+              <a class="source" href="mote_definition_adder.html">
+                mote_definition_adder.rb
+              </a>
+            
+              
+              <a class="source" href="mote_definition_expression.html">
+                mote_definition_expression.rb
+              </a>
+            
+              
+              <a class="source" href="mote_definition_finder.html">
+                mote_definition_finder.rb
+              </a>
+            
+              
+              <a class="source" href="mote_definition_resolver.html">
+                mote_definition_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="mote_dsl.html">
+                mote_dsl.rb
+              </a>
+            
+              
+              <a class="source" href="mote_reference.html">
+                mote_reference.rb
+              </a>
+            
+              
+              <a class="source" href="mote_reference_resolver.html">
+                mote_reference_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="mote_resolver.html">
+                mote_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="mote_value_resolver.html">
+                mote_value_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="motion.html">
+                motion.rb
+              </a>
+            
+              
+              <a class="source" href="forwardable.html">
+                forwardable.rb
+              </a>
+            
+              
+              <a class="source" href="motivation.html">
+                motivation.rb
+              </a>
+            
+              
+              <a class="source" href="motivator.html">
+                motivator.rb
+              </a>
+            
+              
+              <a class="source" href="motive.html">
+                motive.rb
+              </a>
+            
+              
+              <a class="source" href="motive_block.html">
+                motive_block.rb
+              </a>
+            
+              
+              <a class="source" href="motive_instance.html">
+                motive_instance.rb
+              </a>
+            
+              
+              <a class="source" href="motive_instance_finder.html">
+                motive_instance_finder.rb
+              </a>
+            
+              
+              <a class="source" href="motive_instance_identifier.html">
+                motive_instance_identifier.rb
+              </a>
+            
+              
+              <a class="source" href="motive_instance_resolver.html">
+                motive_instance_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="motive_reference.html">
+                motive_reference.rb
+              </a>
+            
+              
+              <a class="source" href="motive_resolver.html">
+                motive_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="constant_motive.html">
+                constant_motive.rb
+              </a>
+            
+              
+              <a class="source" href="context_motive.html">
+                context_motive.rb
+              </a>
+            
+              
+              <a class="source" href="namespace_motive.html">
+                namespace_motive.rb
+              </a>
+            
+              
+              <a class="source" href="needs_motive.html">
+                needs_motive.rb
+              </a>
+            
+              
+              <a class="source" href="new_motive.html">
+                new_motive.rb
+              </a>
+            
+              
+              <a class="source" href="project_motive.html">
+                project_motive.rb
+              </a>
+            
+              
+              <a class="source" href="singleton_motive.html">
+                singleton_motive.rb
+              </a>
+            
+              
+              <a class="source" href="template_motive.html">
+                template_motive.rb
+              </a>
+            
+              
+              <a class="source" href="value_motive.html">
+                value_motive.rb
+              </a>
+            
+              
+              <a class="source" href="object_ext.html">
+                object_ext.rb
+              </a>
+            
+              
+              <a class="source" href="source_constant_resolver.html">
+                source_constant_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="version.html">
+                version.rb
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>forwardable.rb</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p><a href="https://gist.github.com/seanlilmateus/5641989">https://gist.github.com/seanlilmateus/5641989</a></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">module</span> <span class="hljs-title">Forwardable</span></span>
+  <span class="hljs-constant">FORWARDABLE_VERSION</span> = <span class="hljs-string">"1.1.0"</span>
+
+  <span class="hljs-variable">@debug</span> = <span class="hljs-keyword">nil</span>
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-inheritance">&lt;</span><span class="hljs-inheritance">&lt; <span class="hljs-parent">self</span></span></span>
+    <span class="hljs-keyword">attr_accessor</span> <span class="hljs-symbol">:debug</span>
+  <span class="hljs-keyword">end</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Takes a hash as its argument.  The key is a symbol or an array of
+symbols.  These symbols correspond to method names.  The value is
+the accessor to which the methods will be delegated.</p>
+<p>:call-seq:
+   delegate method =&gt; accessor
+   delegate [method, method, …] =&gt; accessor</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-function"><span class="hljs-keyword">def</span> </span>instance_delegate(hash)
+    hash.each{ |methods, accessor|
+      methods = [methods] <span class="hljs-keyword">unless</span> methods.respond_to?(<span class="hljs-symbol">:each</span>)
+      methods.each{ |method|
+        def_instance_delegator(accessor, method)
+      }
+    }
+  <span class="hljs-keyword">end</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Shortcut for defining multiple delegator methods, but with no
+provision for using a different name.  The following two code
+samples have the same effect:</p>
+<p>  def_delegators :@records, :size, :&lt;&lt;, :map</p>
+<p>  def_delegator :@records, :size
+  def_delegator :@records, :&lt;&lt;
+  def_delegator :@records, :map</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-function"><span class="hljs-keyword">def</span> </span>def_instance_delegators(accessor, *methods)
+    methods.delete(<span class="hljs-string">"__send__"</span>)
+    methods.delete(<span class="hljs-string">"__id__"</span>)
+    <span class="hljs-keyword">for</span> method <span class="hljs-keyword">in</span> methods
+      def_instance_delegator(accessor, method)
+    <span class="hljs-keyword">end</span>
+  <span class="hljs-keyword">end</span>
+  
+  <span class="hljs-function"><span class="hljs-keyword">def</span> </span>def_instance_delegator(accessor, method, ali = method)
+    accessor = accessor.id2name <span class="hljs-keyword">if</span> accessor.kind_of?(<span class="hljs-constant">Integer</span>)
+    method = method.id2name <span class="hljs-keyword">if</span> method.kind_of?(<span class="hljs-constant">Integer</span>)
+    ali = ali.id2name <span class="hljs-keyword">if</span> ali.kind_of?(<span class="hljs-constant">Integer</span>)
+    activity = <span class="hljs-constant">Proc</span>.new <span class="hljs-keyword">do</span>
+      define_method(<span class="hljs-string">"<span class="hljs-subst">#{ali}</span>"</span>) <span class="hljs-keyword">do</span> |*args, &amp;block|
+        <span class="hljs-keyword">begin</span>
+          instance_variable_get(accessor).__send_<span class="hljs-number">_</span>(method, *args, &amp;block)
+        <span class="hljs-keyword">rescue</span> <span class="hljs-constant">Exception</span>
+          <span class="hljs-variable">$@</span>.delete_if{|s| %r<span class="hljs-string">"<span class="hljs-subst">#{<span class="hljs-constant">Regexp</span>.quote(__FILE_<span class="hljs-number">_</span>)}</span>"</span>o =~ s} <span class="hljs-keyword">unless</span> <span class="hljs-constant">Forwardable::</span>debug
+          <span class="hljs-constant">Kernel::</span>raise
+        <span class="hljs-keyword">end</span>
+      <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>If it’s not a class or module, it’s an instance</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">begin</span>
+      module_eval(&amp;activity)
+    <span class="hljs-keyword">rescue</span>
+      instance_eval(&amp;activity)
+    <span class="hljs-keyword">end</span>
+  <span class="hljs-keyword">end</span>
+  
+  <span class="hljs-keyword">alias</span> delegate instance_delegate
+  <span class="hljs-keyword">alias</span> def_delegators def_instance_delegators
+  <span class="hljs-keyword">alias</span> def_delegator def_instance_delegator
+<span class="hljs-keyword">end</span>
+
+<span class="hljs-class"><span class="hljs-keyword">module</span> <span class="hljs-title">SingleForwardable</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Takes a hash as its argument.  The key is a symbol or an array of
+symbols.  These symbols correspond to method names.  The value is
+the accessor to which the methods will be delegated.</p>
+<p>:call-seq:
+   delegate method =&gt; accessor
+   delegate [method, method, …] =&gt; accessor</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-function"><span class="hljs-keyword">def</span> </span>single_delegate(hash)
+    hash.each{ |methods, accessor|
+      methods = [methods] <span class="hljs-keyword">unless</span> methods.respond_to?(<span class="hljs-symbol">:each</span>)
+      methods.each{ |method|
+        def_single_delegator(accessor, method)
+      }
+    }
+  <span class="hljs-keyword">end</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Shortcut for defining multiple delegator methods, but with no
+provision for using a different name.  The following two code
+samples have the same effect:</p>
+<p>  def_delegators :@records, :size, :&lt;&lt;, :map</p>
+<p>  def_delegator :@records, :size
+  def_delegator :@records, :&lt;&lt;
+  def_delegator :@records, :map</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-function"><span class="hljs-keyword">def</span> </span>def_single_delegators(accessor, *methods)
+    methods.delete(<span class="hljs-string">"__send__"</span>)
+    methods.delete(<span class="hljs-string">"__id__"</span>)
+    <span class="hljs-keyword">for</span> method <span class="hljs-keyword">in</span> methods
+      def_single_delegator(accessor, method)
+    <span class="hljs-keyword">end</span>
+  <span class="hljs-keyword">end</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Defines a method <em>method</em> which delegates to <em>obj</em> (i.e. it calls
+the method of the same name in <em>obj</em>).  If <em>new_name</em> is
+provided, it is used as the name for the delegate method.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-function"><span class="hljs-keyword">def</span> </span>def_single_delegator(accessor, method, ali = method)
+    instance_eval <span class="hljs-keyword">do</span>
+      define_method(<span class="hljs-string">"<span class="hljs-subst">#{ali}</span>"</span>) <span class="hljs-keyword">do</span> |*args, &amp;block|
+        <span class="hljs-keyword">begin</span>
+          instance_variable_get(accessor).__send_<span class="hljs-number">_</span>(method, *args, &amp;block)
+        <span class="hljs-keyword">rescue</span> <span class="hljs-constant">Exception</span>
+      	  <span class="hljs-variable">$@</span>.delete_if{|s| %r<span class="hljs-string">"<span class="hljs-subst">#{<span class="hljs-constant">Regexp</span>.quote(__FILE_<span class="hljs-number">_</span>)}</span>"</span>o =~ s} <span class="hljs-keyword">unless</span> <span class="hljs-constant">Forwardable::</span>debug
+      	  <span class="hljs-constant">::Kernel::</span>raise
+        <span class="hljs-keyword">end</span>
+      <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+  <span class="hljs-keyword">end</span>
+
+  <span class="hljs-keyword">alias</span> delegate single_delegate
+  <span class="hljs-keyword">alias</span> def_delegators def_single_delegators
+  <span class="hljs-keyword">alias</span> def_delegator def_single_delegator
+<span class="hljs-keyword">end</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

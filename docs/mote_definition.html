@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>mote_definition.rb</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="class_ext.html">
+                class_ext.rb
+              </a>
+            
+              
+              <a class="source" href="constructor.html">
+                constructor.rb
+              </a>
+            
+              
+              <a class="source" href="mote.html">
+                mote.rb
+              </a>
+            
+              
+              <a class="source" href="mote_block.html">
+                mote_block.rb
+              </a>
+            
+              
+              <a class="source" href="mote_definition.html">
+                mote_definition.rb
+              </a>
+            
+              
+              <a class="source" href="mote_definition_adder.html">
+                mote_definition_adder.rb
+              </a>
+            
+              
+              <a class="source" href="mote_definition_expression.html">
+                mote_definition_expression.rb
+              </a>
+            
+              
+              <a class="source" href="mote_definition_finder.html">
+                mote_definition_finder.rb
+              </a>
+            
+              
+              <a class="source" href="mote_definition_resolver.html">
+                mote_definition_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="mote_dsl.html">
+                mote_dsl.rb
+              </a>
+            
+              
+              <a class="source" href="mote_reference.html">
+                mote_reference.rb
+              </a>
+            
+              
+              <a class="source" href="mote_reference_resolver.html">
+                mote_reference_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="mote_resolver.html">
+                mote_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="mote_value_resolver.html">
+                mote_value_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="motion.html">
+                motion.rb
+              </a>
+            
+              
+              <a class="source" href="forwardable.html">
+                forwardable.rb
+              </a>
+            
+              
+              <a class="source" href="motivation.html">
+                motivation.rb
+              </a>
+            
+              
+              <a class="source" href="motivator.html">
+                motivator.rb
+              </a>
+            
+              
+              <a class="source" href="motive.html">
+                motive.rb
+              </a>
+            
+              
+              <a class="source" href="motive_block.html">
+                motive_block.rb
+              </a>
+            
+              
+              <a class="source" href="motive_instance.html">
+                motive_instance.rb
+              </a>
+            
+              
+              <a class="source" href="motive_instance_finder.html">
+                motive_instance_finder.rb
+              </a>
+            
+              
+              <a class="source" href="motive_instance_identifier.html">
+                motive_instance_identifier.rb
+              </a>
+            
+              
+              <a class="source" href="motive_instance_resolver.html">
+                motive_instance_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="motive_reference.html">
+                motive_reference.rb
+              </a>
+            
+              
+              <a class="source" href="motive_resolver.html">
+                motive_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="constant_motive.html">
+                constant_motive.rb
+              </a>
+            
+              
+              <a class="source" href="context_motive.html">
+                context_motive.rb
+              </a>
+            
+              
+              <a class="source" href="namespace_motive.html">
+                namespace_motive.rb
+              </a>
+            
+              
+              <a class="source" href="needs_motive.html">
+                needs_motive.rb
+              </a>
+            
+              
+              <a class="source" href="new_motive.html">
+                new_motive.rb
+              </a>
+            
+              
+              <a class="source" href="project_motive.html">
+                project_motive.rb
+              </a>
+            
+              
+              <a class="source" href="singleton_motive.html">
+                singleton_motive.rb
+              </a>
+            
+              
+              <a class="source" href="template_motive.html">
+                template_motive.rb
+              </a>
+            
+              
+              <a class="source" href="value_motive.html">
+                value_motive.rb
+              </a>
+            
+              
+              <a class="source" href="object_ext.html">
+                object_ext.rb
+              </a>
+            
+              
+              <a class="source" href="source_constant_resolver.html">
+                source_constant_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="version.html">
+                version.rb
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>mote_definition.rb</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">module</span> <span class="hljs-title">Motivation</span></span>
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MoteDefinition</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>I’m not sure this really needs the DSL anymore, since adding expressions</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">include</span> <span class="hljs-constant">MoteDsl</span>
+
+    <span class="hljs-keyword">attr_accessor</span> <span class="hljs-symbol">:parent</span>
+    <span class="hljs-keyword">attr_reader</span> <span class="hljs-symbol">:name</span>, <span class="hljs-symbol">:motives</span>, <span class="hljs-symbol">:value</span>, <span class="hljs-symbol">:template</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>TODO: Can probably turn value and template functionality into ValueMotive and TemplateMotive
+and just automatically attach appropriate MotiveInstances in the constructor</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-function"><span class="hljs-keyword">def</span> </span>initialize(parent, name, *value_or_template_and_motives)
+      <span class="hljs-keyword">self</span>.parent = parent
+      <span class="hljs-variable">@name</span> = name.to_sym <span class="hljs-keyword">if</span> name
+
+      <span class="hljs-variable">@motives</span> = []
+      <span class="hljs-keyword">if</span> value_or_template_and_motives.any?
+        <span class="hljs-keyword">if</span> !value_or_template_and_motives.last.is_a?(<span class="hljs-constant">MotiveInstance</span>)
+          value_or_template = value_or_template_and_motives.pop
+          <span class="hljs-variable">@motives</span> = value_or_template_and_motives
+
+          <span class="hljs-keyword">if</span> value_or_template.is_a? <span class="hljs-constant">MoteReference</span><span class="hljs-comment"># or value_or_template.is_a? MotiveReference</span>
+            <span class="hljs-variable">@motives</span> &lt;&lt; <span class="hljs-constant">Motive</span>.instance(<span class="hljs-symbol">:template</span>, value_or_template)
+          <span class="hljs-keyword">else</span>
+            <span class="hljs-variable">@motives</span> &lt;&lt; <span class="hljs-constant">Motive</span>.instance(<span class="hljs-symbol">:value</span>, value_or_template)
+          <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">else</span>
+          <span class="hljs-variable">@motives</span> = value_or_template_and_motives
+        <span class="hljs-keyword">end</span>
+      <span class="hljs-keyword">end</span>
+
+      <span class="hljs-variable">@motives</span>.each <span class="hljs-keyword">do</span> |motive|
+        motive.parent = <span class="hljs-keyword">self</span>
+      <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> </span>motive(name, *args)
+      name = name.to_sym
+      <span class="hljs-keyword">if</span> motive? name
+        <span class="hljs-keyword">if</span> args.any?
+          raise <span class="hljs-string">"Don't pass arguments to existing motive references (did you mean to create a motive reference?)"</span>
+        <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-variable">@motives</span>[name]
+      <span class="hljs-keyword">end</span>
+      <span class="hljs-variable">@motives</span>[name] = <span class="hljs-keyword">super</span> name, *args
+      <span class="hljs-keyword">self</span>
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> </span>motive?(name)
+      name = name.to_sym
+      <span class="hljs-variable">@motives</span>.has_key? name
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> </span>scan_motive_instances(&amp;block)
+      motives.reverse_each &amp;block
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> </span>mote_definition
+      <span class="hljs-keyword">self</span>
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> </span>add_motive_instance(motive_instance)
+      <span class="hljs-keyword">self</span>.motives &lt;&lt; motive_instance
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> </span>to_s
+      <span class="hljs-string">"MoteDefinition(<span class="hljs-subst">#{[parent, name, *motives].compact.map(&amp;<span class="hljs-symbol">:to_s</span>).join <span class="hljs-string">", "</span>}</span>)"</span>
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> </span>==(other)
+      other.is_a?(<span class="hljs-constant">MoteDefinition</span>) &amp;&amp;
+        <span class="hljs-keyword">self</span>.parent == other.parent &amp;&amp;
+        <span class="hljs-keyword">self</span>.name == other.name &amp;&amp;
+        <span class="hljs-keyword">self</span>.motives == other.motives
+    <span class="hljs-keyword">end</span>
+  <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

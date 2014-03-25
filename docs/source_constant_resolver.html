@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>source_constant_resolver.rb</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="class_ext.html">
+                class_ext.rb
+              </a>
+            
+              
+              <a class="source" href="constructor.html">
+                constructor.rb
+              </a>
+            
+              
+              <a class="source" href="mote.html">
+                mote.rb
+              </a>
+            
+              
+              <a class="source" href="mote_block.html">
+                mote_block.rb
+              </a>
+            
+              
+              <a class="source" href="mote_definition.html">
+                mote_definition.rb
+              </a>
+            
+              
+              <a class="source" href="mote_definition_adder.html">
+                mote_definition_adder.rb
+              </a>
+            
+              
+              <a class="source" href="mote_definition_expression.html">
+                mote_definition_expression.rb
+              </a>
+            
+              
+              <a class="source" href="mote_definition_finder.html">
+                mote_definition_finder.rb
+              </a>
+            
+              
+              <a class="source" href="mote_definition_resolver.html">
+                mote_definition_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="mote_dsl.html">
+                mote_dsl.rb
+              </a>
+            
+              
+              <a class="source" href="mote_reference.html">
+                mote_reference.rb
+              </a>
+            
+              
+              <a class="source" href="mote_reference_resolver.html">
+                mote_reference_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="mote_resolver.html">
+                mote_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="mote_value_resolver.html">
+                mote_value_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="motion.html">
+                motion.rb
+              </a>
+            
+              
+              <a class="source" href="forwardable.html">
+                forwardable.rb
+              </a>
+            
+              
+              <a class="source" href="motivation.html">
+                motivation.rb
+              </a>
+            
+              
+              <a class="source" href="motivator.html">
+                motivator.rb
+              </a>
+            
+              
+              <a class="source" href="motive.html">
+                motive.rb
+              </a>
+            
+              
+              <a class="source" href="motive_block.html">
+                motive_block.rb
+              </a>
+            
+              
+              <a class="source" href="motive_instance.html">
+                motive_instance.rb
+              </a>
+            
+              
+              <a class="source" href="motive_instance_finder.html">
+                motive_instance_finder.rb
+              </a>
+            
+              
+              <a class="source" href="motive_instance_identifier.html">
+                motive_instance_identifier.rb
+              </a>
+            
+              
+              <a class="source" href="motive_instance_resolver.html">
+                motive_instance_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="motive_reference.html">
+                motive_reference.rb
+              </a>
+            
+              
+              <a class="source" href="motive_resolver.html">
+                motive_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="constant_motive.html">
+                constant_motive.rb
+              </a>
+            
+              
+              <a class="source" href="context_motive.html">
+                context_motive.rb
+              </a>
+            
+              
+              <a class="source" href="namespace_motive.html">
+                namespace_motive.rb
+              </a>
+            
+              
+              <a class="source" href="needs_motive.html">
+                needs_motive.rb
+              </a>
+            
+              
+              <a class="source" href="new_motive.html">
+                new_motive.rb
+              </a>
+            
+              
+              <a class="source" href="project_motive.html">
+                project_motive.rb
+              </a>
+            
+              
+              <a class="source" href="singleton_motive.html">
+                singleton_motive.rb
+              </a>
+            
+              
+              <a class="source" href="template_motive.html">
+                template_motive.rb
+              </a>
+            
+              
+              <a class="source" href="value_motive.html">
+                value_motive.rb
+              </a>
+            
+              
+              <a class="source" href="object_ext.html">
+                object_ext.rb
+              </a>
+            
+              
+              <a class="source" href="source_constant_resolver.html">
+                source_constant_resolver.rb
+              </a>
+            
+              
+              <a class="source" href="version.html">
+                version.rb
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>source_constant_resolver.rb</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">module</span> <span class="hljs-title">Motivation</span></span>
+  <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SourceConstantResolver</span></span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> </span>initialize(source_modules, source_consts)
+      <span class="hljs-variable">@source_modules</span> = source_modules
+      <span class="hljs-variable">@source_consts</span> = source_consts
+
+      raise <span class="hljs-string">"no sources available"</span> <span class="hljs-keyword">unless</span> <span class="hljs-variable">@source_modules</span>.any? || <span class="hljs-variable">@source_consts</span>.any?
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> </span>source_const?(name)
+      !source_const(name).<span class="hljs-keyword">nil</span>?
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> </span>source_const(name)
+      source_name = name.to_s.underscore
+      source_sym = source_name.to_sym
+
+      const_name = name.to_s.camelize
+
+      <span class="hljs-keyword">return</span> <span class="hljs-variable">@source_consts</span>[source_sym] <span class="hljs-keyword">if</span> <span class="hljs-variable">@source_consts</span>.has_key? source_sym
+
+      <span class="hljs-variable">@source_modules</span>.each <span class="hljs-keyword">do</span> |source_module|
+        const = const_name.split(<span class="hljs-string">"::"</span>).inject source_module <span class="hljs-keyword">do</span> |module_part, const_part|
+          <span class="hljs-keyword">if</span> module_part &amp;&amp; module_part.const_defined?(const_part)
+            module_part.const_get const_part
+          <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">end</span>
+        <span class="hljs-keyword">if</span> const
+          <span class="hljs-keyword">return</span> const
+        <span class="hljs-keyword">end</span>
+      <span class="hljs-keyword">end</span>
+
+      <span class="hljs-keyword">nil</span>
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> </span>require_source_const(name)
+      source_const(name).tap <span class="hljs-keyword">do</span> |const|
+        <span class="hljs-keyword">if</span> const.<span class="hljs-keyword">nil</span>?
+          const_name = name.to_s.camelize
+          or_source_consts = <span class="hljs-keyword">if</span> <span class="hljs-variable">@source_consts</span>.any?
+                               <span class="hljs-string">" or source_consts (<span class="hljs-subst">#{<span class="hljs-variable">@source_consts</span>.keys.join <span class="hljs-string">", "</span>}</span>)"</span>
+                             <span class="hljs-keyword">end</span>
+          raise <span class="hljs-string">"Failed to find constant <span class="hljs-subst">#{const_name}</span> in source modules (<span class="hljs-subst">#{<span class="hljs-variable">@source_modules</span>.join <span class="hljs-string">", "</span>}</span>)<span class="hljs-subst">#{or_source_consts}</span>"</span>
+        <span class="hljs-keyword">end</span>
+      <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+  <span class="hljs-keyword">end</span>
+<span class="hljs-keyword">end</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
