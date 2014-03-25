@@ -1,15 +1,18 @@
 module Motivation
   module Motives
     class ConstantMotive < Motive
-      attr_reader :constant
-
-      def initialize(parent, constant)
-        super parent, constant
+      def initialize(motive_instance, constant = nil)
+        super motive_instance
         @constant = constant
       end
 
-      def resolve
-        self.parent.require_source_const @constant
+      def constant(mote)
+        binding.pry if mote.name.nil?
+        @constant || mote.name.classify
+      end
+
+      def resolve_self(mote, *args)
+        mote.require_source_const constant(mote)
       end
     end
   end

@@ -28,6 +28,10 @@ module Motivation
       MoteDefinitionExpression.new @motivator, mote_definition
     end
 
+    def mote_reference(name, *args)
+      Mote.reference @mote_definition, name, *args
+    end
+
         # north_pole! do
         #   namespace "Reindeer" do
         #     constant "Vixen" do
@@ -75,7 +79,7 @@ module Motivation
           end
         else
           validate_mote_name! name
-          self.mote_reference name
+          self.mote_reference name, *args
         end
       end
     end      

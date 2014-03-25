@@ -14,7 +14,7 @@ module Motivation
       MoteDefinition.new self.mote_definition, name, *motives
     end
 
-    def mote_reference(name)
+    def mote_reference(name, *args)
       nil
     end
 

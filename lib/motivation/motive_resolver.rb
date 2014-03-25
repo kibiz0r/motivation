@@ -22,7 +22,7 @@ module Motivation
         end
       end
 
-      if parent_mote = mote.parent && parent_mote.can_resolve_motives?
+      if parent_mote = mote.parent and parent_mote.can_resolve_motives?
         return parent_mote.resolve_motive motive, *args
       end
 

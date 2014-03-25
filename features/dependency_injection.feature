@@ -7,7 +7,9 @@ Feature:
       Given I have a module "NorthPole":
       """
       class Santa
-        constructor :mrs_claus, :workshop, :sleigh
+        # constructor :mrs_claus, :workshop, :sleigh
+        def initialize(mrs_claus, workshop, sleigh)
+        end
       end
 
       class MrsClaus

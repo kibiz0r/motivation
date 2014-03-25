@@ -60,9 +60,17 @@ module Motivation
     # By default, invoking something on a Mote resolves whatever is returned from [].
     def method_missing(mote_or_motive_name, *args, &block)
       if mote_or_motive = self[mote_or_motive_name]
-        resolve_mote_or_motive mote_or_motive, *args, &block
+        resolve_mote_or_motive mote_or_motive, *args
       else
         super mote_or_motive_name, *args, &block
+      end
+    end
+
+    def resolve_mote_or_motive(mote_or_motive, *args)
+      if mote_or_motive.is_a? Mote
+        resolve_mote mote_or_motive, *args
+      else
+        resolve_motive mote_or_motive, *args
       end
     end
 
@@ -84,6 +92,8 @@ module Motivation
     end
 
     attr_reader :parent, :definition
+
+    def_delegators :definition, :name
 
     def motive_instances
       self.definition.motives

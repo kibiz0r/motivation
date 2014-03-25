@@ -17,8 +17,6 @@ module Motivation
       # and instantiate them if they implement #resolve_motive_instance
       if definition = mote.identify_motive_instance(motive_instance)
         definition.new motive_instance, *motive_instance.args
-      else
-        binding.pry
       end
     end
   end

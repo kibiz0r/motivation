@@ -1,16 +1,16 @@
 module Motivation
   module Motives
     class NewMotive < Motive
-      def initialize(parent, *args)
-        super parent, *args
+      def initialize(motive_instance, *args)
+        super motive_instance
       end
 
-      def resolve(*args)
-        self.parent.constant.new *args
+      def resolve_self(mote, *args)
+        mote.constant.new *(self.args + args)
       end
 
-      def resolve_mote
-        resolve *self.args
+      def resolve_mote(mote, *args)
+        mote.resolve_motive self, *args
       end
     end
   end

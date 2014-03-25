@@ -53,7 +53,7 @@ module Motivation
       motive_instances = root_mote_definition_spec.map do |motive_instance_spec| 
         Motive.instance *motive_instance_spec
       end
-      @root_mote_definition = Mote.define nil, motive_instances
+      @root_mote_definition = Mote.define nil, *motive_instances
       @source_consts = Hash[args.extract_options!.map { |k, v| [k.to_sym, v] }]
       @source_modules = args
 
