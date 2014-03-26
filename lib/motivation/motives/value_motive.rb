@@ -9,7 +9,16 @@ module Motivation
       end
 
       def resolve_mote(mote)
-        @value
+        resolve_self(mote)
+      end
+
+      def resolve_self(mote, *args)
+        if value.is_a? Array
+          resolved_elements = value.map do |element|
+            element_mote = mote.resolve_mote_reference element
+            element_mote.resolve
+          end
+        end
       end
     end
   end
