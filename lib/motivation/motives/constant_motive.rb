@@ -7,8 +7,7 @@ module Motivation
       end
 
       def constant(mote)
-        binding.pry if mote.name.nil?
-        @constant || mote.name.classify
+        @constant || mote.name.to_s.camelize
       end
 
       def resolve_self(mote, *args)

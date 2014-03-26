@@ -22,8 +22,17 @@ module Motivation
         end
       end
 
-      if parent_mote = mote.parent and parent_mote.can_resolve_motives?
-        return parent_mote.resolve_motive motive, *args
+      parent_mote = mote
+
+      while parent_mote = parent_mote.parent and parent_mote.can_resolve_motives?
+        parent_mote.scan_motive_instances do |overriding_motive_instance|
+          overriding_motive_definition = parent_mote.identify_motive_instance overriding_motive_instance
+          if overriding_motive_definition.can_resolve_motive_with_definition? motive.definition
+            overriding_motive = parent_mote.resolve_motive_instance overriding_motive_instance
+
+            return overriding_motive.resolve_motive parent_mote, motive, *args
+          end
+        end
       end
 
       return motive.resolve_self mote, *args

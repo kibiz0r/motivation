@@ -7,7 +7,10 @@ module Motivation
       end
 
       def resolve_self(mote)
-        @needs.map { |r| mote.resolve_mote_reference r }
+        @needs.map do |mote_reference|
+          needed_mote = mote.resolve_mote_reference mote_reference
+          needed_mote.resolve
+        end
       end
 
       def resolve_new_motive(mote, new_motive)

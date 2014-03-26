@@ -259,6 +259,10 @@
 
     <span class="hljs-function"><span class="hljs-keyword">def</span> </span>mote_definition_expression(mote_definition)
       <span class="hljs-constant">MoteDefinitionExpression</span>.new <span class="hljs-variable">@motivator</span>, mote_definition
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> </span>mote_reference(name, *args)
+      <span class="hljs-constant">Mote</span>.reference <span class="hljs-variable">@mote_definition</span>, name, *args
     <span class="hljs-keyword">end</span></pre></div></div>
             
         </li>
@@ -358,7 +362,7 @@ end</p>
           <span class="hljs-keyword">end</span>
         <span class="hljs-keyword">else</span>
           validate_mote_name! name
-          <span class="hljs-keyword">self</span>.mote_reference name
+          <span class="hljs-keyword">self</span>.mote_reference name, *args
         <span class="hljs-keyword">end</span>
       <span class="hljs-keyword">end</span>
     <span class="hljs-keyword">end</span>      

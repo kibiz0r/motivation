@@ -234,7 +234,10 @@ and the unresolved tree of MoteDefinitions and MotiveInstances.</p>
 <p>Motes are created by their parents resolving a MoteDefinition. Because of this,
 if you want to define a new Mote, you should pass a MoteDefinition to add_mote_definition
 and then call resolve_mote_definition.</p>
-<p>Motes themselves really have no state; they’re just an interface to resolving things.</p>
+<p>Motes themselves really have no state; they’re just an interface to resolving things.
+All of their statefulness is contained in their Motives (which they memoize,
+but are a function of the MotiveInstances in their MoteDefinition and those in the
+Mote’s ancestor Motes).</p>
 
             </div>
             
@@ -256,16 +259,16 @@ and optionally a splat of MotiveInstances.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-function"><span class="hljs-keyword">def</span> </span><span class="hljs-keyword">self</span>.define(*args)
-      parent = <span class="hljs-keyword">nil</span>
-
-      <span class="hljs-keyword">if</span> args.first.is_a? <span class="hljs-constant">MoteDefinition</span>
-        parent, name = args.slice! <span class="hljs-number">0</span>, <span class="hljs-number">2</span>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-function"><span class="hljs-keyword">def</span> </span><span class="hljs-keyword">self</span>.define(parent_or_name, *name_and_or_motive_instances)
+      <span class="hljs-keyword">if</span> parent_or_name.is_a? <span class="hljs-constant">MoteDefinition</span>
+        parent = parent_or_name
+        name = name_and_or_motive_instances.shift
       <span class="hljs-keyword">else</span>
-        name = args.shift
+        parent = <span class="hljs-keyword">nil</span>
+        name = parent_or_name
       <span class="hljs-keyword">end</span>
-
-      <span class="hljs-constant">MoteDefinition</span>.new parent, name, *args
+      motive_instances = name_and_or_motive_instances
+      <span class="hljs-constant">MoteDefinition</span>.new parent, name, *motive_instances
     <span class="hljs-keyword">end</span></pre></div></div>
             
         </li>
@@ -282,12 +285,16 @@ you need a name and preferably a parent. You can also provide args to the resolu
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-function"><span class="hljs-keyword">def</span> </span><span class="hljs-keyword">self</span>.reference(*args)
-      <span class="hljs-keyword">if</span> args.first.is_a? <span class="hljs-constant">String</span> <span class="hljs-keyword">or</span> args.first.is_a? <span class="hljs-constant">Symbol</span>
-        <span class="hljs-constant">MoteReference</span>.new <span class="hljs-keyword">nil</span>, *args
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-function"><span class="hljs-keyword">def</span> </span><span class="hljs-keyword">self</span>.reference(parent_or_name, *name_and_or_args)
+      <span class="hljs-keyword">if</span> parent_or_name.is_a? <span class="hljs-constant">MoteDefinition</span>
+        parent = parent_or_name
+        name = name_and_or_args.shift
       <span class="hljs-keyword">else</span>
-        <span class="hljs-constant">MoteReference</span>.new *args
+        parent = <span class="hljs-keyword">nil</span>
+        name = parent_or_name
       <span class="hljs-keyword">end</span>
+      args = name_and_or_args
+      <span class="hljs-constant">MoteReference</span>.new parent, name, *args
     <span class="hljs-keyword">end</span></pre></div></div>
             
         </li>
@@ -337,9 +344,17 @@ Doing so will walk the Mote tree back to the root <em>twice</em>, consulting the
             
             <div class="content"><div class='highlight'><pre>    <span class="hljs-function"><span class="hljs-keyword">def</span> </span>method_missing(mote_or_motive_name, *args, &amp;block)
       <span class="hljs-keyword">if</span> mote_or_motive = <span class="hljs-keyword">self</span>[mote_or_motive_name]
-        resolve_mote_or_motive mote_or_motive, *args, &amp;block
+        resolve_mote_or_motive mote_or_motive, *args
       <span class="hljs-keyword">else</span>
         <span class="hljs-keyword">super</span> mote_or_motive_name, *args, &amp;block
+      <span class="hljs-keyword">end</span>
+    <span class="hljs-keyword">end</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> </span>resolve_mote_or_motive(mote_or_motive, *args)
+      <span class="hljs-keyword">if</span> mote_or_motive.is_a? <span class="hljs-constant">Mote</span>
+        resolve_mote mote_or_motive, *args
+      <span class="hljs-keyword">else</span>
+        resolve_motive mote_or_motive, *args
       <span class="hljs-keyword">end</span>
     <span class="hljs-keyword">end</span></pre></div></div>
             
@@ -374,6 +389,8 @@ so you always get the same Motive back from [] or method_missing.</p>
     <span class="hljs-keyword">end</span>
 
     <span class="hljs-keyword">attr_reader</span> <span class="hljs-symbol">:parent</span>, <span class="hljs-symbol">:definition</span>
+
+    def_delegators <span class="hljs-symbol">:definition</span>, <span class="hljs-symbol">:name</span>
 
     <span class="hljs-function"><span class="hljs-keyword">def</span> </span>motive_instances
       <span class="hljs-keyword">self</span>.definition.motives

@@ -234,15 +234,18 @@
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">module</span> <span class="hljs-title">Motivation</span></span>
   <span class="hljs-class"><span class="hljs-keyword">module</span> <span class="hljs-title">Motives</span></span>
     <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ConstantMotive</span> <span class="hljs-inheritance">&lt; <span class="hljs-parent">Motive</span></span></span>
-      <span class="hljs-keyword">attr_reader</span> <span class="hljs-symbol">:constant</span>
-
-      <span class="hljs-function"><span class="hljs-keyword">def</span> </span>initialize(parent, constant)
-        <span class="hljs-keyword">super</span> parent, constant
+      <span class="hljs-function"><span class="hljs-keyword">def</span> </span>initialize(motive_instance, constant = <span class="hljs-keyword">nil</span>)
+        <span class="hljs-keyword">super</span> motive_instance
         <span class="hljs-variable">@constant</span> = constant
       <span class="hljs-keyword">end</span>
 
-      <span class="hljs-function"><span class="hljs-keyword">def</span> </span>resolve
-        <span class="hljs-keyword">self</span>.parent.require_source_const <span class="hljs-variable">@constant</span>
+      <span class="hljs-function"><span class="hljs-keyword">def</span> </span>constant(mote)
+        binding.pry <span class="hljs-keyword">if</span> mote.name.<span class="hljs-keyword">nil</span>?
+        <span class="hljs-variable">@constant</span> || mote.name.classify
+      <span class="hljs-keyword">end</span>
+
+      <span class="hljs-function"><span class="hljs-keyword">def</span> </span>resolve_self(mote, *args)
+        mote.require_source_const constant(mote)
       <span class="hljs-keyword">end</span>
     <span class="hljs-keyword">end</span>
   <span class="hljs-keyword">end</span>

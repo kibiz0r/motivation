@@ -240,7 +240,7 @@
       <span class="hljs-keyword">end</span>
 
       <span class="hljs-function"><span class="hljs-keyword">def</span> </span>resolve_self(mote)
-        <span class="hljs-variable">@needs</span>.map &amp;<span class="hljs-symbol">:resolve</span>
+        <span class="hljs-variable">@needs</span>.map { |r| mote.resolve_mote_reference r }
       <span class="hljs-keyword">end</span>
 
       <span class="hljs-function"><span class="hljs-keyword">def</span> </span>resolve_new_motive(mote, new_motive)

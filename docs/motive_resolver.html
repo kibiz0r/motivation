@@ -267,7 +267,7 @@
         <span class="hljs-keyword">end</span>
       <span class="hljs-keyword">end</span>
 
-      <span class="hljs-keyword">if</span> parent_mote = mote.parent &amp;&amp; parent_mote.can_resolve_motives?
+      <span class="hljs-keyword">if</span> parent_mote = mote.parent <span class="hljs-keyword">and</span> parent_mote.can_resolve_motives?
         <span class="hljs-keyword">return</span> parent_mote.resolve_motive motive, *args
       <span class="hljs-keyword">end</span>
 

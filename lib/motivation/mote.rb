@@ -8,32 +8,39 @@
 # and then call resolve_mote_definition.
 #
 # Motes themselves really have no state; they're just an interface to resolving things.
+# All of their statefulness is contained in their Motives (which they memoize,
+# but are a function of the MotiveInstances in their MoteDefinition and those in the
+# Mote's ancestor Motes).
 module Motivation
   class Mote
     extend Forwardable
 
     # To define a Mote, you need to specify at least a name, preferably a parent,
     # and optionally a splat of MotiveInstances.
-    def self.define(*args)
-      parent = nil
-
-      if args.first.is_a? MoteDefinition
-        parent, name = args.slice! 0, 2
+    def self.define(parent_or_name, *name_and_or_motive_instances)
+      if parent_or_name.is_a? MoteDefinition
+        parent = parent_or_name
+        name = name_and_or_motive_instances.shift
       else
-        name = args.shift
+        parent = nil
+        name = parent_or_name
       end
-
-      MoteDefinition.new parent, name, *args
+      motive_instances = name_and_or_motive_instances
+      MoteDefinition.new parent, name, *motive_instances
     end
 
     # To create a reference to a Mote, that can be resolved to a Mote on-demand,
     # you need a name and preferably a parent. You can also provide args to the resolution.
-    def self.reference(*args)
-      if args.first.is_a? String or args.first.is_a? Symbol
-        MoteReference.new nil, *args
+    def self.reference(parent_or_name, *name_and_or_args)
+      if parent_or_name.is_a? MoteDefinition
+        parent = parent_or_name
+        name = name_and_or_args.shift
       else
-        MoteReference.new *args
+        parent = nil
+        name = parent_or_name
       end
+      args = name_and_or_args
+      MoteReference.new parent, name, *args
     end
 
     # You can ask for a Mote or Motive with [].

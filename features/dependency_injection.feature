@@ -8,7 +8,12 @@ Feature:
       """
       class Santa
         # constructor :mrs_claus, :workshop, :sleigh
-        def initialize(mrs_claus, workshop, sleigh)
+        attr_reader :mrs_claus #, :workshop, :sleigh
+
+        def initialize(mrs_claus) #, workshop, sleigh)
+          @mrs_claus = mrs_claus
+          # @workshop = workshop
+          # @sleigh = sleigh
         end
       end
 
@@ -16,11 +21,21 @@ Feature:
       end
 
       class Workshop
-        constructor :elves
+        # constructor :elves
+        attr_reader :elves
+
+        def initialize(elves)
+          @elves = elves
+        end
       end
 
       class Sleigh
-        constructor :reindeer
+        # constructor :reindeer
+        attr_reader :reindeer
+
+        def initialize(reindeer)
+          @reindeer = reindeer
+        end
       end
 
       class Reindeer
@@ -32,7 +47,7 @@ Feature:
       And I have a Motefile:
       """
       namespace "NorthPole" do
-        santa!.needs mrs_claus, workshop, sleigh
+        santa!.needs mrs_claus #, workshop, sleigh
         mrs_claus!
         workshop!.needs elves
         elves! [elf] * 200
@@ -60,3 +75,4 @@ Feature:
       """
       When I require the Motefile
       Then the Mote "santa" should resolve to "NorthPole::Santa"
+      And the instance "santa" should have "mrs_claus", which is an instance of "NorthPole::MrsClaus"

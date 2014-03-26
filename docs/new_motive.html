@@ -234,16 +234,16 @@
             <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">module</span> <span class="hljs-title">Motivation</span></span>
   <span class="hljs-class"><span class="hljs-keyword">module</span> <span class="hljs-title">Motives</span></span>
     <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">NewMotive</span> <span class="hljs-inheritance">&lt; <span class="hljs-parent">Motive</span></span></span>
-      <span class="hljs-function"><span class="hljs-keyword">def</span> </span>initialize(parent, *args)
-        <span class="hljs-keyword">super</span> parent, *args
+      <span class="hljs-function"><span class="hljs-keyword">def</span> </span>initialize(motive_instance, *args)
+        <span class="hljs-keyword">super</span> motive_instance
       <span class="hljs-keyword">end</span>
 
-      <span class="hljs-function"><span class="hljs-keyword">def</span> </span>resolve(*args)
-        <span class="hljs-keyword">self</span>.parent.constant.new *args
+      <span class="hljs-function"><span class="hljs-keyword">def</span> </span>resolve_self(mote, *args)
+        mote.constant.new *(<span class="hljs-keyword">self</span>.args + args)
       <span class="hljs-keyword">end</span>
 
-      <span class="hljs-function"><span class="hljs-keyword">def</span> </span>resolve_mote
-        resolve *<span class="hljs-keyword">self</span>.args
+      <span class="hljs-function"><span class="hljs-keyword">def</span> </span>resolve_mote(mote, *args)
+        mote.resolve_motive <span class="hljs-keyword">self</span>, *args
       <span class="hljs-keyword">end</span>
     <span class="hljs-keyword">end</span>
   <span class="hljs-keyword">end</span>

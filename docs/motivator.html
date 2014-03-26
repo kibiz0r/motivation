@@ -286,7 +286,7 @@
       motive_instances = root_mote_definition_spec.map <span class="hljs-keyword">do</span> |motive_instance_spec| 
         <span class="hljs-constant">Motive</span>.instance *motive_instance_spec
       <span class="hljs-keyword">end</span>
-      <span class="hljs-variable">@root_mote_definition</span> = <span class="hljs-constant">Mote</span>.define <span class="hljs-keyword">nil</span>, motive_instances
+      <span class="hljs-variable">@root_mote_definition</span> = <span class="hljs-constant">Mote</span>.define <span class="hljs-keyword">nil</span>, *motive_instances
       <span class="hljs-variable">@source_consts</span> = <span class="hljs-constant">Hash</span>[args.extract_options!.map { |k, v| [k.to_sym, v] }]
       <span class="hljs-variable">@source_modules</span> = args
 

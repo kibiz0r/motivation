@@ -242,10 +242,10 @@
       <span class="hljs-keyword">end</span>
 
       <span class="hljs-function"><span class="hljs-keyword">def</span> </span>resolve_self(mote)
-        mote.require_source_const <span class="hljs-keyword">self</span>.namespace
+        mote.require_source_const namespace
       <span class="hljs-keyword">end</span>
 
-      <span class="hljs-function"><span class="hljs-keyword">def</span> </span>resolve_namespace_motive(mote, namespace_motive)
+      <span class="hljs-function"><span class="hljs-keyword">def</span> </span>resolve_namespace_motive(mote, namespace_motive, *args)
         mote.resolve_motive(<span class="hljs-keyword">self</span>).const_get namespace_motive.namespace
       <span class="hljs-keyword">end</span>
     <span class="hljs-keyword">end</span>
