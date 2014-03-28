@@ -49,6 +49,7 @@ motivation/class_ext.rb
     :context,
     :namespace,
     :constant,
+    :singleton,
     :new,
     Motivation,
     Motivation::Motives

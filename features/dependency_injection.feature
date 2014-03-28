@@ -77,6 +77,7 @@ Feature:
       end
       """
       When I require the Motefile
-      Then the Mote "santa" should resolve to "NorthPole::Santa"
-      And the instance "santa" should expose "mrs_claus", which is an instance of "NorthPole::MrsClaus"
-      And the instance "elves" should have "200" of "NorthPole::Elf"
+      Then the Mote "santa" should resolve to an instance of "NorthPole::Santa"
+      And the resolved "santa" should respond to "mrs_claus", which should be an instance of "NorthPole::MrsClaus"
+      And the resolved "elves" should have 200 entries, each of which should be an instance of "NorthPole::Elf"
+      And the resolved "workshop" should have 200 elves, each of which should be an instance of "NorthPole::Elf"
