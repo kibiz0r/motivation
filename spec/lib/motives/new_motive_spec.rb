@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe NewMotive do
-  test_module :my_module do |mod|
+  let_module :my_module do |mod|
     mod::MyClass = Class.new
   end
 
@@ -22,7 +22,7 @@ describe NewMotive do
   end
 
   context "with namespaces" do
-    test_module :my_module do |mod|
+    let_module :my_module do |mod|
       mod::MyNamespace = Module.new.tap do |namespace|
         namespace::MyClass = Class.new
       end

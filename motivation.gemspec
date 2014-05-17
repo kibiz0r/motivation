@@ -22,6 +22,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rr"
   gem.add_development_dependency "pry"
   gem.add_development_dependency "cucumber"
+  gem.add_development_dependency "ruby-prof"
 
   gem.summary       = <<-END.gsub(/^ +/, "")
     Motivation allows you to define your object graph according to your own

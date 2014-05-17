@@ -13,6 +13,18 @@ module Motivation
       def resolve_self(mote, *args)
         mote.require_source_const constant(mote)
       end
+
+      # def resolve(resolution)
+      def handle_resolution(resolution)
+        resolution.for self do
+        end
+
+        resolution.for Mote do |mote|
+        end
+
+        resolution.for MoteDefinition do
+        end
+      end
     end
   end
 end

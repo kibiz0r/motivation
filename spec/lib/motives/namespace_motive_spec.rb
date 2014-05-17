@@ -17,7 +17,7 @@ describe NamespaceMotive do
   end
 
   let :motivator do
-    Motivator.new Mote.define(Motive.instance(:context)), Motivation, NamespaceMotive, my_module
+    Motivator.new :context, Motivation, NamespaceMotive, my_module
   end
 
   subject do

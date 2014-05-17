@@ -11,31 +11,93 @@ module Motivation
     #   If there are, then we ask the Mote to resolve them (which probably just triggers this same process)
     #     And then we ask the resolved Motive to resolve our target Motive
     #   Otherwise, we ask the root Mote to resolve our target Motive
-    def resolve_motive(mote, motive, *args)
-      mote.scan_preceding_motive_instances motive.instance do |preceding_motive_instance|
-        preceding_motive_definition = mote.identify_motive_instance preceding_motive_instance
+    #
+    # ---
+    #
+    # New way, using a MotiveResolution object...
+    #
+    # Find the next parent of the Motive to resolve, which may be a Mote or
+    # Motive.
+    # Ask it to handle the MotiveResolution.
+    # Use the returned MotiveResolution to decide whether to keep going or
+    # return immediately.
+    #
+    # Maybe we should cut out the definition-checking part. It seems like it
+    # would simplify a lot of things if we could just guarantee that all
+    # preceding nodes are already reified from the AST.
+    #
+    # Also, maybe there's a way to use callcc to simplify this? (Or to do it at
+    # all...)
+    def scan_preceding_nodes(starting_node)
+      current_mote = starting_node.mote
 
-        if preceding_motive_definition.can_resolve_motive_with_definition? motive.definition
-          preceding_motive = mote.resolve_motive_instance preceding_motive_instance
-
-          return preceding_motive.resolve_motive mote, motive, *args
-        end
+      current_mote.scan_preceding_motives(
+        starting_node.motive
+      ) do |current_motive|
+        puts "yielding"
+        yield Node.new current_mote, current_motive
       end
 
-      parent_mote = mote
-
-      while parent_mote = parent_mote.parent and parent_mote.can_resolve_motives?
-        parent_mote.scan_motive_instances do |overriding_motive_instance|
-          overriding_motive_definition = parent_mote.identify_motive_instance overriding_motive_instance
-          if overriding_motive_definition.can_resolve_motive_with_definition? motive.definition
-            overriding_motive = parent_mote.resolve_motive_instance overriding_motive_instance
-
-            return overriding_motive.resolve_motive parent_mote, motive, *args
-          end
+      while current_mote = current_mote.parent
+        current_mote.scan_motives do |current_motive|
+          puts "yielding"
+          yield Node.new current_mote, current_motive
         end
       end
+    end
 
-      return motive.resolve_self mote, *args
+    # Something like this?
+    def resolve_motive(motive, *args)
+      walk_nodes_from(motive).inject nil do |resolution, node|
+        resolution ||= Motive.resolution motive, args,
+          continue: ->(c) { next c },
+          return: ->(r) { break r },
+          value: -> (*a) { nil }
+
+        node.motive_resolution resolution
+
+        nil # or maybe resolution?
+      end.value
+    end
+
+    # def resolve_motive(mote, motive, *args)
+    #   motive.preceding_nodes.each do |preceding_node|
+    #     puts "trying to resolve through #{preceding_node}"
+    #     preceding_node.resolve_motive resolution
+    #   end
+
+    #   motive.resolve_motive resolution
+
+    #   raise "failed to resolve"
+
+
+    #   mote.scan_preceding_motive_instances motive.instance do |preceding_motive_instance|
+    #     preceding_motive_definition = mote.identify_motive_instance preceding_motive_instance
+
+    #     if preceding_motive_definition.can_resolve_motive_with_definition? motive.definition
+    #       preceding_motive = mote.resolve_motive_instance preceding_motive_instance
+
+    #       return preceding_motive.resolve_motive mote, motive, *args
+    #     end
+    #   end
+
+    #   parent_mote = mote
+
+    #   while parent_mote = parent_mote.parent and parent_mote.can_resolve_motives?
+    #     parent_mote.scan_motive_instances do |overriding_motive_instance|
+    #       overriding_motive_definition = parent_mote.identify_motive_instance overriding_motive_instance
+    #       if overriding_motive_definition.can_resolve_motive_with_definition? motive.definition
+    #         overriding_motive = parent_mote.resolve_motive_instance overriding_motive_instance
+
+    #         return overriding_motive.resolve_motive parent_mote, motive, *args
+    #       end
+    #     end
+    #   end
+
+    #   return motive.resolve_self mote, *args
+    # end
+
+    def motive_resolution(motive_resolution)
     end
   end
 end

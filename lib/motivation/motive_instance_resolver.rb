@@ -16,7 +16,7 @@ module Motivation
       # so that means that we must find the definition of every MotiveInstance before us
       # and instantiate them if they implement #resolve_motive_instance
       if definition = mote.identify_motive_instance(motive_instance)
-        definition.new motive_instance, *motive_instance.args
+        definition.new mote, motive_instance, *motive_instance.args
       end
     end
   end

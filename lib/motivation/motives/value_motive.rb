@@ -20,6 +20,24 @@ module Motivation
           end
         end
       end
+
+      def handle_resolution(resolution)
+        resolution.for Mote do |mote|
+          resolution.return do
+            resolve_node value # resolves a Mote, Array, or Hash
+          end
+        end
+      end
+
+      def self.handle_resolution(resolution)
+        resolution.for :mote_defined => [Mote, Array, Hash] do |value|
+          resolution.after do |definition|
+            resolution.value.tap do |definition|
+              definition.motives << Motive.instance(:value, value)
+            end
+          end
+        end
+      end
     end
   end
 end

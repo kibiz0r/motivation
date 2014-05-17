@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe Motivator do
-  test_module :my_module do |mod|
+  let_module :my_module do |mod|
     mod::AwesomeMotive = Class.new
   end
 

@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe NeedsMotive do
-  test_module :my_module do |mod|
+  let_module :my_module do |mod|
     mod::MyDep = Class.new
     mod::MyClass = Class.new do
       attr_reader :dep

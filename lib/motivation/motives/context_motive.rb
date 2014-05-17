@@ -1,7 +1,8 @@
 module Motivation
   module Motives
     class ContextMotive < Motive
-      def initialize(motive_instance)
+      def initialize(mote, instance)
+        super mote, instance
         @mote_definitions = {}
       end
 

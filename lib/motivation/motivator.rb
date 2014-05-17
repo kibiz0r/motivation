@@ -21,13 +21,6 @@ module Motivation
       :source_const,
       :source_const?
 
-    def root_mote_definition
-      unless @root_mote_definition
-        motivation
-      end
-      @root_mote_definition
-    end
-
     def source_modules
       unless @source_modules
         motivation
@@ -37,18 +30,18 @@ module Motivation
 
     def eval(string = nil, &block)
       if string
-        MoteBlock.new(self, root_mote.definition).eval string
+        root_mote_block.eval string
       elsif block_given?
-        MoteBlock.new(self, root_mote.definition).eval &block
+        root_mote_block.eval &block
       end
       self
     end
 
-    def motivation(*args)
-      if args.empty?
-        args = DefaultMotivationArgs
-      end
+    def root_mote_block
+      MoteBlock.new self, root_mote.definition
+    end
 
+    def initialize(*args)
       root_mote_definition_spec = args.slice! 0, args.find_index { |a| a.is_a? Module } || 0
       motive_instances = root_mote_definition_spec.map do |motive_instance_spec| 
         Motive.instance *motive_instance_spec
@@ -56,11 +49,6 @@ module Motivation
       @root_mote_definition = Mote.define nil, *motive_instances
       @source_consts = Hash[args.extract_options!.map { |k, v| [k.to_sym, v] }]
       @source_modules = args
-
-      self
-    end
-
-    def initialize
     end
 
     Resolvers.each do |resolver|
@@ -79,7 +67,7 @@ module Motivation
     end
 
     def root_mote
-      @root_mote ||= Mote.new self, root_mote_definition
+      @root_mote ||= Mote.new self, @root_mote_definition
     end
 
     def resolve_mote_definition(mote_definition)
@@ -87,6 +75,10 @@ module Motivation
         return root_mote
       end
       mote_definition_resolver.resolve_mote_definition self, mote_definition
+    end
+
+    def preceding_nodes
+      []
     end
 
     # def resolve_motive_instance(motive_instance)
@@ -146,6 +138,16 @@ module Motivation
 
     def [](mote_name)
       root_mote[mote_name]
+    end
+
+    def scan_preceding_motives(_)
+    end
+
+    def scan_motives
+    end
+
+    def parent
+      nil
     end
 
     # def method_missing(method_name, *args, &block)

@@ -67,7 +67,7 @@ module Motivation
     # By default, invoking something on a Mote resolves whatever is returned from [].
     def method_missing(mote_or_motive_name, *args, &block)
       if mote_or_motive = self[mote_or_motive_name]
-        resolve_mote_or_motive mote_or_motive, *args
+        resolve_mote_or_motive mote_or_motive, *args#, &block
       else
         super mote_or_motive_name, *args, &block
       end
@@ -77,7 +77,7 @@ module Motivation
       if mote_or_motive.is_a? Mote
         resolve_mote mote_or_motive, *args
       else
-        resolve_motive mote_or_motive, *args
+        mote_or_motive.resolve *args
       end
     end
 
@@ -104,6 +104,20 @@ module Motivation
 
     def motive_instances
       self.definition.motives
+    end
+
+    def preceding_nodes
+      Enumerator.new do |yielder|
+        parent.scan_motives do |motive|
+          yielder.yield motive
+        end
+
+        yielder.yield parent
+
+        parent.preceding_nodes.each do |node|
+          yielder.yield node
+        end
+      end
     end
 
     # To resolve nodes from the definition tree, the Mote uses the Resolver provided by its parent
@@ -134,8 +148,19 @@ module Motivation
       end
     end
 
-    def resolve_motive(motive, *args)
-      motive_resolver.resolve_motive self, motive, *args
+    def find_motive(motive_name)
+    end
+
+    # def resolve_motive(motive, *args)
+      # motive_resolver.resolve_motive self, motive, *args
+    def resolve_motive(resolution)
+      # resolution.preceding_nodes.each do |resolution, preceding_motive|
+      #   preceding_motive.resolve_motive resolving_node, resolution,
+      #     return: ->(r) { return r }
+      # end
+    end
+
+    def resolve_mote(resolving_node, resolution)
     end
 
     def resolve_value
@@ -143,10 +168,10 @@ module Motivation
     end
 
     def resolve(*args)
-      resolve_mote self, *args
+      resolve_mote Node.new(self), self, *args
     end
 
-    def resolve_mote(mote, *args)
+    def resolve_mote(resolving_node, mote, *args)
       mote_resolver.resolve_mote self, mote, *args
     end
 
@@ -170,6 +195,18 @@ module Motivation
       motive_instances.reverse_each &block
     end
 
+    def scan_preceding_motives(motive_instance, &block)
+      scan_preceding_motive_instances motive_instance do |instance|
+        block.call resolve_motive_instance(instance)
+      end
+    end
+
+    def scan_motives(&block)
+      scan_motive_instances do |instance|
+        block.call resolve_motive_instance(instance)
+      end
+    end
+
     def scan_preceding_motive_instances(motive_instance, &block)
       motive_instances.take_while do |defined_instance|
         defined_instance != motive_instance
@@ -182,7 +219,7 @@ module Motivation
 
     def ==(other)
       other.is_a?(Mote) &&
-        self.motivator == other.motivator &&
+        self.parent == other.parent &&
         self.definition == other.definition
     end
 

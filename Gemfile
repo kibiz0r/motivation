@@ -1,4 +1,4 @@
-source :rubygems
+source "https://rubygems.org"
 
 # group :cucumber do
 #   gem 'frank-cucumber'

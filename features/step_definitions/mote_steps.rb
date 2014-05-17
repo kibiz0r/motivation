@@ -66,7 +66,7 @@ end
 # end
 
 def get_Mote(mote_name)
-  Motivation[mote_name]
+  data["root"][mote_name]
 end
 
 def get_resolved(mote_name)

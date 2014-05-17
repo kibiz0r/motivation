@@ -53,7 +53,7 @@ Feature:
         santa!.needs mrs_claus, workshop#, sleigh
         mrs_claus!
         workshop!.needs elves
-        elves! [elf] * 200
+        elves! [elf] * 6
         elf!.singleton false
         sleigh!.needs [
           dasher,
@@ -79,5 +79,5 @@ Feature:
       When I require the Motefile
       Then the Mote "santa" should resolve to an instance of "NorthPole::Santa"
       And the resolved "santa" should respond to "mrs_claus", which should be an instance of "NorthPole::MrsClaus"
-      And the resolved "elves" should have 200 entries, each of which should be an instance of "NorthPole::Elf"
-      And the resolved "workshop" should have 200 elves, each of which should be an instance of "NorthPole::Elf"
+      And the resolved "elves" should have 6 entries, each of which should be an instance of "NorthPole::Elf"
+      And the resolved "workshop" should have 6 elves, each of which should be an instance of "NorthPole::Elf"

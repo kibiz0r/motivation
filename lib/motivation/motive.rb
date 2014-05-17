@@ -1,13 +1,15 @@
 module Motivation
   class Motive
     extend Forwardable
+    include Node
 
     def_delegators :instance, :args, :name
 
-    attr_reader :instance
+    attr_reader :mote, :instance
 
-    def initialize(motive_instance)
-      @instance = motive_instance
+    def initialize(mote, instance)
+      @mote = mote
+      @instance = instance
     end
 
     def definition
@@ -18,25 +20,57 @@ module Motivation
       self.class.resolution_name
     end
 
-    def resolve(mote, *args)
-      mote.resolve_motive self, *args
+    def self.resolution(node, *args)
+      MotiveResolution.new node, *args
     end
 
-    def resolve_motive(mote, motive, *args)
-      resolve_method = :"resolve_#{motive.resolution_name}"
-      if self.respond_to? resolve_method
-        self.send resolve_method, mote, motive, *args
+    def motive_resolver
+      mote.motive_resolver
+    end
+
+    # def resolve(mote, *args)
+    #   mote.resolve_motive self, *args
+    # end
+    def resolve(*args)
+      motive_resolver.resolve_motive self, *args
+      # resolution = Motive.resolution [mote, self],
+      #   return: ->(resolved) { return resolved }
+      # resolve_motive resolution
+    end
+
+    def resolve_motive(resolution)
+    end
+
+    # def resolve_motive(mote, motive, *args)
+    #   resolve_method = :"resolve_#{motive.resolution_name}"
+    #   if self.respond_to? resolve_method
+    #     self.send resolve_method, mote, motive, *args
+    #   end
+    # end
+
+    def preceding_nodes
+      Enumerator.new do |yielder|
+        mote.scan_preceding_motives instance do |motive|
+          yielder.yield motive
+        end
+
+        yielder.yield mote
+
+        mote.preceding_nodes.each do |node|
+          yielder.yield node
+        end
       end
     end
 
-    def ==(other)
-      other.is_a?(self.class) &&
-        self.args == other.args
-    end
+    # def ==(other)
+    #   other.is_a?(self.class) &&
+    #     self.mote == other.mote &&
+    #     self.instance == other.instance
+    # end
 
-    def to_s
-      "#{self.class.name}(#{self.args.map(&:to_s).join(", ")})"
-    end
+    # def to_s
+    #   "#{self.class.name}(#{self.args.map(&:to_s).join(", ")})"
+    # end
 
     class << self
       def instance(*args)
@@ -53,28 +87,49 @@ module Motivation
         name.demodulize.underscore
       end
 
+      # Using #instance_methods is really slow...
+      #
+      # We can avoid using reflection to answer these questions by passing a
+      # continuation-style object up the chain and only opting into providing
+      # a return value.
       def can_resolve_motive_with_definition?(motive_definition)
-        instance_methods.include? :"resolve_#{motive_definition.resolution_name}"
+        @resolvable_motives ||= {}
+
+        resolution_name = motive_definition.resolution_name
+        can_resolve = @resolvable_motives[resolution_name]
+
+        return can_resolve unless can_resolve.nil?
+
+        @resolvable_motives[resolution_name] = imethods.include? :"resolve_#{motive_definition.resolution_name}"
       end
 
       def can_identify_motive_instances?
-        instance_methods.include? :identify_motive_instance
+        return @can_identify_motive_instances unless @can_identify_motive_instances.nil?
+        @can_identify_motive_instances = imethods.include? :identify_motive_instance
       end
 
       def can_find_mote_definitions?
-        instance_methods.include? :find_mote_definition
+        return @can_find_mote_definitions unless @can_find_mote_definitions.nil?
+        @can_find_mote_definitions = imethods.include? :find_mote_definition
       end
 
       def can_add_mote_definitions?
-        instance_methods.include? :add_mote_definition
+        return @can_add_mote_definitions unless @can_add_mote_definitions.nil?
+        @can_add_mote_definitions = imethods.include? :add_mote_definition
       end
 
       def can_resolve_mote_definitions?
-        instance_methods.include? :resolve_mote_definition
+        return @can_resolve_mote_definitions unless @can_resolve_mote_definitions.nil?
+        @can_resolve_mote_definitions = imethods.include? :resolve_mote_definition
       end
 
       def can_resolve_motes?
-        instance_methods.include? :resolve_mote
+        return @can_resolve_motes unless @can_resolve_motes.nil?
+        @can_resolve_motes = imethods.include? :resolve_mote
+      end
+
+      def imethods
+        @imethods ||= instance_methods
       end
     end
   end

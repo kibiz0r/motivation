@@ -1,2 +1,2 @@
 au BufNewFile,BufRead Motefile				set filetype=ruby
-let g:vim_ignore += ['Frank']
+let g:vim_ignore += ['Frank', 'docs', 'tmp']
