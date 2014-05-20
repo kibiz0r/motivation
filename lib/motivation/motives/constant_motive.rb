@@ -1,22 +1,20 @@
 module Motivation
   module Motives
     class ConstantMotive < Motive
-      def initialize(motive_instance, constant = nil)
-        super motive_instance
+      def initialize(mote, constant = nil)
+        super mote
         @constant = constant
       end
 
-      def constant(mote)
+      def constant
         @constant || mote.name.to_s.camelize
       end
 
-      def resolve_self(mote, *args)
-        mote.require_source_const constant(mote)
-      end
-
-      # def resolve(resolution)
-      def handle_resolution(resolution)
+      def propose_resolution(resolution)
         resolution.for self do
+          resolution.propose do
+            mote.require_source_const constant
+          end
         end
 
         resolution.for Mote do |mote|

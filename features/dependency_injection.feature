@@ -50,7 +50,7 @@ Feature:
       And I have a Motefile:
       """
       namespace "NorthPole" do
-        santa!.needs mrs_claus, workshop#, sleigh
+        santa!.constant.new.needs(mrs_claus, workshop, sleigh)
         mrs_claus!
         workshop!.needs elves
         elves! [elf] * 6

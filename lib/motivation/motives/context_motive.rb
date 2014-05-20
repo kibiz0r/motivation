@@ -1,8 +1,8 @@
 module Motivation
   module Motives
     class ContextMotive < Motive
-      def initialize(mote, instance)
-        super mote, instance
+      def initialize(mote)
+        super mote
         @mote_definitions = {}
       end
 
@@ -16,6 +16,9 @@ module Motivation
 
       def resolve_mote_definition(mote, mote_definition)
         Mote.new mote.resolve_mote_definition(mote_definition.parent), mote_definition
+      end
+
+      def propose_resolution(resolution)
       end
     end
   end

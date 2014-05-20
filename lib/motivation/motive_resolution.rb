@@ -38,4 +38,14 @@ module Motivation
       end
     end
   end
+
+  class Resolution
+    def initialize(&block)
+      @block = block
+    end
+
+    def value
+      @block.call
+    end
+  end
 end

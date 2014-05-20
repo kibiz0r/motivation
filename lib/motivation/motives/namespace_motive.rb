@@ -1,13 +1,43 @@
 module Motivation
   module Motives
     class NamespaceMotive < Motive
-      def initialize(mote, instance, namespace = nil)
-        super mote, instance
+      def initialize(mote, namespace = nil)
+        super mote
         @namespace = namespace
       end
 
       def namespace
         @namespace || ""
+      end
+
+      def resolve_target(target, *args) # ResolutionTarget
+        case target
+        when self
+          MotiveResolution.new target, args,
+            default: -> { require_source_const namespace }
+        when ConstantMotive
+        end
+      end
+
+      def propose_resolution(resolution)
+        # resolution.for(self).propose do
+        resolution.for self do
+          resolution.propose do
+            require_source_const namespace
+          end
+        end
+
+        resolution.for ConstantMotive do |motive|
+          resolution.final do
+            self.resolve.const_get motive.constant
+          end
+        end
+
+        resolution.for NamespaceMotive do |motive|
+          resolution.final do
+            self.resolve.const_get motive.namespace
+          end
+        end
       end
 
       def resolve_motive(resolution)

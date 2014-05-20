@@ -160,15 +160,44 @@ module Motivation
       # end
     end
 
-    def resolve_mote(resolving_node, resolution)
+    def walk_nodes_from(starting_node)
+      Enumerator.new do |yielder|
+        yielder.yield starting_node
+        starting_node.preceding_nodes.each do |node|
+          yielder.yield node
+        end
+      end
     end
 
-    def resolve_value
-      mote_value_resolver.resolve_mote_value self
+    def walk_nodes_to_root
+      Enumerator.new do |yielder|
+        scan_motives do |motive|
+          yielder.yield motive
+        end
+        walk_nodes_from(self).each do |node|
+          yielder.yield node
+        end
+      end
     end
 
     def resolve(*args)
-      resolve_mote Node.new(self), self, *args
+      puts "resolve(#{args})"
+      proposal = Proposal.new walk_nodes_to_root, self, *args do |node, proposal|
+        proposal.propose do
+          5
+        end
+        # node.propose_resolution proposal
+      end
+      proposal.value
+      # Proposal.through walk_nodes_to_root, self, *args do |proposal, node|
+      #   node.propose_resolution proposal
+      # end
+      # Proposal.on walk_nodes_to_root, :propose_resolution, self, *args
+    end
+
+    def propose_resolution(resolution)
+      resolution.for self do |args|
+      end
     end
 
     def resolve_mote(resolving_node, mote, *args)
@@ -224,13 +253,30 @@ module Motivation
     end
 
     def to_s
-      "Mote(#{self.definition})"
+      if self.parent.is_a? Motivator
+        "<root>"
+      else
+        "#{self.name}!"
+      end
     end
 
     def_delegators :source_constant_resolver,
       :require_source_const,
       :source_const,
       :source_const?
+
+    def propose_identification(identification)
+    end
+
+    def propose_location(location)
+    end
+
+    def locate_node(node_name)
+      Proposal.on walk_nodes_from(self), :propose_location, node_name
+    end
+
+    def accept_mote_definition(mote_definition)
+    end
 
     # Motes must have a parent in order to walk the tree.
     # Identifiers, Resolvers, and Finders are all provided by the Motivator,
@@ -242,6 +288,7 @@ module Motivation
       :motive_reference_resolver,
       :mote_definition_resolver,
       :mote_resolver,
+      :node_resolver,
       :mote_value_resolver,
       :motive_instance_identifier,
       :motive_instance_resolver,

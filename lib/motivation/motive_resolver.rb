@@ -28,36 +28,50 @@ module Motivation
     #
     # Also, maybe there's a way to use callcc to simplify this? (Or to do it at
     # all...)
-    def scan_preceding_nodes(starting_node)
-      current_mote = starting_node.mote
-
-      current_mote.scan_preceding_motives(
-        starting_node.motive
-      ) do |current_motive|
-        puts "yielding"
-        yield Node.new current_mote, current_motive
-      end
-
-      while current_mote = current_mote.parent
-        current_mote.scan_motives do |current_motive|
-          puts "yielding"
-          yield Node.new current_mote, current_motive
+    def walk_nodes_from(starting_node)
+      Enumerator.new do |yielder|
+        yielder.yield starting_node
+        starting_node.preceding_nodes.each do |node|
+          yielder.yield node
         end
       end
+      # return enum_for :walk_nodes_from, starting_node unless block_given?
+
+      # current_mote = starting_node.mote
+
+      # current_mote.scan_preceding_motives(
+      #   starting_node.motive
+      # ) do |current_motive|
+      #   puts "yielding"
+      #   yield current_motive
+      # end
+
+      # while current_mote = current_mote.parent
+      #   current_mote.scan_motives do |current_motive|
+      #     puts "yielding"
+      #     yield current_motive
+      #   end
+      # end
     end
 
     # Something like this?
-    def resolve_motive(motive, *args)
-      walk_nodes_from(motive).inject nil do |resolution, node|
-        resolution ||= Motive.resolution motive, args,
-          continue: ->(c) { next c },
-          return: ->(r) { break r },
-          value: -> (*a) { nil }
+    def resolve_target(target, args)
+      # Each node from the target up to the root will be asked to propose a
+      # resolution.
+      #
+      # The root's proposed resolution will be the final answer, but since each
+      # returned resolution should be written in terms of the received one, the
+      # target itself really has complete control.
+      walk_nodes_from(target).inject lambda { nil } do |resolution, node|
+        context = Proposal.new target,
+          args,
+          on_propose: ->(r) { next r },
+          on_final: ->(r) { break r }
 
-        node.motive_resolution resolution
+        node.propose_resolution context
 
-        nil # or maybe resolution?
-      end.value
+        resolution
+      end.call
     end
 
     # def resolve_motive(mote, motive, *args)

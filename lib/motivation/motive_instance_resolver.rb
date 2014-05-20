@@ -15,8 +15,22 @@ module Motivation
       # But MoteDefinitions can delegate to MotiveInstances,
       # so that means that we must find the definition of every MotiveInstance before us
       # and instantiate them if they implement #resolve_motive_instance
+      #
+      # -------
+      #
+      # This should eventually live in Motivator.propose_resolution for
+      # MotiveInstance, and should resolve the args before passing them.
+      #
+      # Maybe this is a different verb, for turning the AST Nodes into Nodes...
+      # Maybe propose_instantiation?
+      # Or maybe this is two steps: first identifying the definition, then
+      # instantiating it?
       if definition = mote.identify_motive_instance(motive_instance)
-        definition.new mote, motive_instance, *motive_instance.args
+        begin
+          definition.new mote, *motive_instance.args
+        rescue ArgumentError => e
+          raise ArgumentError, "#{mote}.#{motive_instance}(#{motive_instance.args.join ", "}): #{e}"
+        end
       end
     end
   end

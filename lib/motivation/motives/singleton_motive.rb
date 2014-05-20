@@ -1,8 +1,8 @@
 module Motivation
   module Motives
     class SingletonMotive < Motive
-      def initialize(motive_instance, is_singleton)
-        super motive_instance
+      def initialize(mote, is_singleton)
+        super mote
         @is_singleton = is_singleton
       end
 

@@ -3,13 +3,10 @@ module Motivation
     extend Forwardable
     include Node
 
-    def_delegators :instance, :args, :name
+    attr_reader :mote
 
-    attr_reader :mote, :instance
-
-    def initialize(mote, instance)
+    def initialize(mote)
       @mote = mote
-      @instance = instance
     end
 
     def definition
@@ -32,10 +29,14 @@ module Motivation
     #   mote.resolve_motive self, *args
     # end
     def resolve(*args)
-      motive_resolver.resolve_motive self, *args
+      Proposal.on walk_nodes_to_root, :propose_resolution, self, *args
       # resolution = Motive.resolution [mote, self],
       #   return: ->(resolved) { return resolved }
       # resolve_motive resolution
+    end
+
+    def walk_nodes_to_root
+      mote.walk_nodes_from self
     end
 
     def resolve_motive(resolution)
@@ -48,19 +49,19 @@ module Motivation
     #   end
     # end
 
-    def preceding_nodes
-      Enumerator.new do |yielder|
-        mote.scan_preceding_motives instance do |motive|
-          yielder.yield motive
-        end
+    # def preceding_nodes
+    #   Enumerator.new do |yielder|
+    #     mote.scan_preceding_motives instance do |motive|
+    #       yielder.yield motive
+    #     end
 
-        yielder.yield mote
+    #     yielder.yield mote
 
-        mote.preceding_nodes.each do |node|
-          yielder.yield node
-        end
-      end
-    end
+    #     mote.preceding_nodes.each do |node|
+    #       yielder.yield node
+    #     end
+    #   end
+    # end
 
     # def ==(other)
     #   other.is_a?(self.class) &&

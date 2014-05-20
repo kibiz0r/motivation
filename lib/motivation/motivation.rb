@@ -18,6 +18,7 @@ motivation/mote_definition_expression.rb
 
 motivation/node.rb
 motivation/motive_resolution.rb
+motivation/proposal.rb
 motivation/mote_resolver.rb
 motivation/mote_value_resolver.rb
 motivation/motive_resolver.rb
@@ -51,10 +52,6 @@ motivation/class_ext.rb
 
   DefaultMotivationArgs = [
     :context,
-    :namespace,
-    :constant,
-    :singleton,
-    :new,
     Motivation,
     Motivation::Motives
   ]
