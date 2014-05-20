@@ -10,18 +10,24 @@ module Motivation
         @constant || mote.name.to_s.camelize
       end
 
-      def propose_resolution(resolution)
-        resolution.for self do
+      def propose_resolution(resolution, target)
+        if target == self
           resolution.propose do
             mote.require_source_const constant
           end
         end
 
-        resolution.for Mote do |mote|
-        end
+        # resolution.for self do
+        #   resolution.propose do
+        #     mote.require_source_const constant
+        #   end
+        # end
 
-        resolution.for MoteDefinition do
-        end
+        # resolution.for Mote do |mote|
+        # end
+
+        # resolution.for MoteDefinition do
+        # end
       end
     end
   end

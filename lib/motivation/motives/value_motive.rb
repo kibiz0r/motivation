@@ -21,6 +21,9 @@ module Motivation
         end
       end
 
+      def propose_resolution(resolution, target)
+      end
+
       def handle_resolution(resolution)
         resolution.for Mote do |mote|
           resolution.return do

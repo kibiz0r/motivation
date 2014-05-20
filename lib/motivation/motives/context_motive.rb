@@ -18,7 +18,7 @@ module Motivation
         Mote.new mote.resolve_mote_definition(mote_definition.parent), mote_definition
       end
 
-      def propose_resolution(resolution)
+      def propose_resolution(resolution, target)
       end
     end
   end

@@ -16,10 +16,22 @@ module Motivation
         mote.resolve_motive self, *args
       end
 
-      def propose_resolution(resolution)
-        resolution.for self do |args|
-          mote.constant.new *(self.args + args)
+      def propose_resolution(resolution, target, *args)
+        if target == self
+          resolution.propose do
+            mote.constant.new *(self.args + args)
+          end
         end
+
+        if target == mote
+          resolution.final do
+            self.resolve *args
+          end
+        end
+
+        # resolution.for self do |args|
+        #   mote.constant.new *(self.args + args)
+        # end
 
         # Should this be:
         # resolution.for mote
@@ -52,13 +64,13 @@ module Motivation
         # Motives can still affect child Motes even if they are not acting like
         # a scope, but because they have a specific Mote reference in @mote,
         # they can decide not to act like a scope.
-        resolution.for mote do |_, args|
-          resolution.propose do
-            p self.args
-            p args
-            mote.constant.new *(self.args + args)
-          end
-        end
+        # resolution.for mote do |_, args|
+        #   resolution.propose do
+        #     p self.args
+        #     p args
+        #     mote.constant.new *(self.args + args)
+        #   end
+        # end
       end
     end
   end

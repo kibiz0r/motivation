@@ -1,3 +1,5 @@
+require "continuation"
+
 module Motivation
   class Proposal
     # attr_reader :target, :args
@@ -25,22 +27,44 @@ module Motivation
     #   end
     #   value.call
     # end
+    def value
+      each.to_a.last.call
+    end
 
-    def each(*args, &block)
-      return enum_for :each, *args unless block_given?
+    # def proposition
+    #   @proposition ||= Proposition.new
+    # end
 
-      proposed = -> { nil }
-      final = false
-      @enumerator.each do |context|
-        proposition = Proposition.new args,
-          on_propose: ->(p) { proposed = p },
-          on_final: ->(p) { proposed = p; final = true }
-
-        block.call proposition
-
-        break if final
+    def each(&block)
+      Enumerator.new do |yielder|
+        callcc do |finaled|
+          @enumerator.each do |element|
+            callcc do |proposed|
+              proposition = Proposition.new(
+                on_propose: ->(p) { puts "yielding"; yielder.yield p; proposed.call; puts "done yielding" },
+                on_final: ->(p) { puts "finaling"; yielder.yield p; finaled.call; puts "done finaling" }
+              )
+              @block.call element, proposition
+            end
+          end
+        end
       end
     end
+    # def each(*args, &block)
+    #   return enum_for :each, *args unless block_given?
+
+    #   proposed = -> { nil }
+    #   final = false
+    #   @enumerator.each do |context|
+    #     proposition = Proposition.new args,
+    #       on_propose: ->(p) { proposed = p },
+    #       on_final: ->(p) { proposed = p; final = true }
+
+    #     block.call proposition
+
+    #     break if final
+    #   end
+    # end
 
     def for(target_pattern, *args_pattern, &block)
       if for? target_pattern, *args_pattern
@@ -91,17 +115,21 @@ module Motivation
     end
 
     class Proposition
-      def initialize(args, handlers)
-        @args = args
+      def initialize(handlers = {})
+        # @args = args
         @handlers = handlers
       end
 
       def propose(&block)
-        @handlers[:on_propose].call block
+        if h = @handlers[:on_propose]
+          h.call block
+        end
       end
 
       def final(&block)
-        @handlers[:on_final].call block
+        if h = @handlers[:on_final]
+          h.call block
+        end
       end
     end
   end

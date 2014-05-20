@@ -77,7 +77,7 @@ module Motivation
       mote_definition_resolver.resolve_mote_definition self, mote_definition
     end
 
-    def propose_resolution(resolution)
+    def propose_resolution(resolution, target)
     end
 
     def preceding_nodes

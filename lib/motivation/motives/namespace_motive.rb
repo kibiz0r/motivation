@@ -19,25 +19,43 @@ module Motivation
         end
       end
 
-      def propose_resolution(resolution)
-        # resolution.for(self).propose do
-        resolution.for self do
+      def propose_resolution(resolution, target)
+        if target == self
           resolution.propose do
             require_source_const namespace
           end
         end
 
-        resolution.for ConstantMotive do |motive|
+        if target.is_a? ConstantMotive
           resolution.final do
-            self.resolve.const_get motive.constant
+            self.resolve.const_get target.constant
           end
         end
 
-        resolution.for NamespaceMotive do |motive|
+        if target.is_a? NamespaceMotive
           resolution.final do
-            self.resolve.const_get motive.namespace
+            self.resolve.const_get target.namespace
           end
         end
+
+        # resolution.for(self).propose do
+        # resolution.for self do
+        #   resolution.propose do
+        #     require_source_const namespace
+        #   end
+        # end
+
+        # resolution.for ConstantMotive do |motive|
+        #   resolution.final do
+        #     self.resolve.const_get motive.constant
+        #   end
+        # end
+
+        # resolution.for NamespaceMotive do |motive|
+        #   resolution.final do
+        #     self.resolve.const_get motive.namespace
+        #   end
+        # end
       end
 
       def resolve_motive(resolution)

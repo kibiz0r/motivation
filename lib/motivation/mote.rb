@@ -182,11 +182,8 @@ module Motivation
 
     def resolve(*args)
       puts "resolve(#{args})"
-      proposal = Proposal.new walk_nodes_to_root, self, *args do |node, proposal|
-        proposal.propose do
-          5
-        end
-        # node.propose_resolution proposal
+      proposal = Proposal.new walk_nodes_to_root do |node, proposal|
+        node.propose_resolution proposal, self
       end
       proposal.value
       # Proposal.through walk_nodes_to_root, self, *args do |proposal, node|
@@ -195,8 +192,11 @@ module Motivation
       # Proposal.on walk_nodes_to_root, :propose_resolution, self, *args
     end
 
-    def propose_resolution(resolution)
-      resolution.for self do |args|
+    def propose_resolution(resolution, target)
+      if target == self
+        resolution.propose do
+          :nothing
+        end
       end
     end
 
