@@ -19,10 +19,10 @@ module Motivation
         end
       end
 
-      def propose_resolution(resolution, target)
+      def propose_resolution(resolution, target, *args)
         if target == self
           resolution.propose do
-            require_source_const namespace
+            mote.require_source_const namespace
           end
         end
 

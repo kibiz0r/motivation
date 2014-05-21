@@ -19,12 +19,14 @@ module Motivation
       def propose_resolution(resolution, target, *args)
         if target == self
           resolution.propose do
+            puts "newing up on #{mote.constant} with #{self.args} and #{args}"
             mote.constant.new *(self.args + args)
           end
         end
 
         if target == mote
           resolution.final do
+            puts "final resolution for #{target} with #{args}"
             self.resolve *args
           end
         end

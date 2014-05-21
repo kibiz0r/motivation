@@ -9,10 +9,10 @@ module Motivation
     #   @args = args || []
     #   @handlers = handlers
     # end
-    def initialize(enumerator, &block)
+    def initialize(enumerator, *args, &block)
       @enumerator = enumerator.to_enum
       # @target = target
-      # @args = args
+      @args = args
       @block = block
     end
 
@@ -36,15 +36,18 @@ module Motivation
     # end
 
     def each(&block)
+      args = @args
       Enumerator.new do |yielder|
-        callcc do |finaled|
+        callcc do |finaled| # Can be simulated with throw/catch.
           @enumerator.each do |element|
             callcc do |proposed|
               proposition = Proposition.new(
                 on_propose: ->(p) { puts "yielding"; yielder.yield p; proposed.call; puts "done yielding" },
-                on_final: ->(p) { puts "finaling"; yielder.yield p; finaled.call; puts "done finaling" }
+                on_final: ->(p) { puts "finaling"; yielder.yield p; finaled.call; puts "done finaling" },
+                on_continue: ->(a) { args = a.call; puts "continuing with #{args}"; proposed.call }
               )
-              @block.call element, proposition
+              puts "calling with #{args}"
+              @block.call proposition, element, *args
             end
           end
         end
@@ -128,6 +131,12 @@ module Motivation
 
       def final(&block)
         if h = @handlers[:on_final]
+          h.call block
+        end
+      end
+
+      def continue(&block)
+        if h = @handlers[:on_continue]
           h.call block
         end
       end

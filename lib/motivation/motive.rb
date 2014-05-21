@@ -29,7 +29,7 @@ module Motivation
     #   mote.resolve_motive self, *args
     # end
     def resolve(*args)
-      Proposal.new walk_nodes_to_root do |node, proposal|
+      Proposal.new walk_nodes_to_root do |proposal, node|
         node.propose_resolution proposal, self, *args
       end.value
       # Proposal.on walk_nodes_to_root, :propose_resolution, self, *args

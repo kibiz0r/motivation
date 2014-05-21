@@ -24,10 +24,19 @@ module Motivation
           end
         end
 
-        if target == mote
-          resolution.final do
-            puts "resolving with needs"
-            mote.new self.resolve
+        # if target == mote
+        #   resolution.final do
+        #     puts "resolving with needs"
+        #     mote.new self.resolve
+        #   end
+        # end
+
+        if target.is_a? NewMotive
+          resolution.continue do
+            puts "continuing NewMotive!"
+            r = resolve_self
+            puts "with #{r}"
+            r
           end
         end
         # resolution.for self do

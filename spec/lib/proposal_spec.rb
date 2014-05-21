@@ -26,10 +26,28 @@ describe Proposal do
   #     expect(proposal.value).to eq(15)
   #   end
   # end
+  describe "another crazy world" do
+    it "looks like this" do
+      Proposal.new do |proposal, element|
+        if element == 1
+          proposal.continue do
+            "Hello"
+          end
+        end
+
+        if element == 2
+          proposal.propose do |s|
+            "#{s}, World"
+          end
+        end
+      end
+      proposal.through([1, 2, 3]).value
+    end
+  end
 
   describe "a crazy world" do
     it "looks like this" do
-      proposal = Proposal.new [1, 2, 3].each do |n, proposal|
+      proposal = Proposal.new [1, 2, 3].each do |proposal, n|
         puts "proposing"
         proposal.propose do
           puts "evaluating"
@@ -48,7 +66,7 @@ describe Proposal do
       expect(proposal.value).to eq(4)
       puts "done"
 
-      proposal = Proposal.new [1, 2, 3].each do |n, proposal|
+      proposal = Proposal.new [1, 2, 3].each do |proposal, n|
         if n == 2
           proposal.final do
             8
@@ -63,7 +81,23 @@ describe Proposal do
       expect(proposal.each.to_a.map(&:call)).to eq([2, 8])
       expect(proposal.value).to eq(8)
 
-      proposal = Proposal.new [1, 2, 3].each do |n, outer|
+      respond = lambda do |proposal, n|
+        if n == 1
+          proposal.continue do
+            n + 1
+          end
+        else
+          proposal.final do
+            n + 1
+          end
+        end
+      end
+      proposal = Proposal.new ([respond] * 3).each, 1 do |proposal, responder, n|
+        responder.call proposal, n
+      end
+      expect(proposal.each.to_a.map(&:call)).to eq([3])
+
+      proposal = Proposal.new [1, 2, 3].each do |outer, n|
         if n == 1
           outer.propose do
             -n
@@ -71,7 +105,7 @@ describe Proposal do
         elsif n == 2
           outer.propose do
             # 2, 20
-            Proposal.new [n + 1, (n + 1) * 10].each do |n2, inner|
+            Proposal.new [n + 1, (n + 1) * 10].each do |inner, n2|
               if n2 > 10
                 inner.final do
                   n2 # 20
@@ -85,7 +119,7 @@ describe Proposal do
           end
         else
           outer.final do
-            Proposal.new [99, 100, 101] do |n2, finalizer|
+            Proposal.new [99, 100, 101] do |finalizer, n2|
               if n2 == 101
                 finalizer.final { n2 }
               else

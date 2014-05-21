@@ -182,8 +182,8 @@ module Motivation
 
     def resolve(*args)
       puts "resolve(#{args})"
-      proposal = Proposal.new walk_nodes_to_root do |node, proposal|
-        node.propose_resolution proposal, self
+      proposal = Proposal.new walk_nodes_to_root, *args do |proposal, node, *args|
+        node.propose_resolution proposal, self, *args
       end
       proposal.value
       # Proposal.through walk_nodes_to_root, self, *args do |proposal, node|
