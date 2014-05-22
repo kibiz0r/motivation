@@ -28,20 +28,104 @@ describe Proposal do
   # end
   describe "another crazy world" do
     it "looks like this" do
-      Proposal.new do |proposal, element|
+      # Managing the body of the Proposal:
+      # - Proposing pops out of the Proposal block
+      # - Redoing pops out and starts it again with different args
+      # - Continuing sets the next Proposal block to use
+      #
+      # You can hook into an existing Proposal:
+      # - before
+      # - after
+      # - wrap
+      #
+      # The point of a Proposal is that it is invoked once for each value
+      # passed to #feed, and at every iteration, you are able to:
+      # - propose a resolution
+      # - finalize a resolution
+      # - change the block that is used for future iterations
+      # - alter the values passed to the block from #feed for future iterations
+      # -- (this is a special case of changing the block, really)
+      # - alter potential or existing resolutions
+      # - simulate more values being inserted into the fed values
+      #
+      # When you suggest a resolution, or change the block, the current
+      # iteration is canceled and the next iteration begins if more fed values
+      # are available.
+      #
+      # ---
+      #
+      # The question is how to model Proposals within Proposals.
+      #
+      # Suppose the outer Proposal ticks once, delegating to the inner
+      # Proposal, which generates once tentative Proposition and one final.
+      #
+      # The outer Proposal should also generate one tentative and one final.
+      # This implies that the outer Proposal should actually end up ticking
+      # twice, but the second time it's actually within the context of the
+      # inner Proposal already.
+      #
+      # I suppose you would need a way to convert the inner Proposition into
+      # an outer one, because the results likely have different meanings.
+      #
+      # But the point is that the execution state is linked. I guess the outer
+      # Proposal itself takes care of the machinery of proposing/finalizing
+      # using the conversion block.
+      map = Proposal.new do
+      end
+      [1, 2, 3].proposal.map do |proposal, n|
+      end
+
+      proposal = Proposal.new do |proposal, element|
         if element == 1
-          proposal.continue do
+          proposal.propose do
             "Hello"
           end
         end
 
         if element == 2
-          proposal.propose do |s|
+          proposal.after do |s|
             "#{s}, World"
           end
         end
       end
-      proposal.through([1, 2, 3]).value
+
+      proposal = Proposal.new do |proposal, element|
+        if element == 1
+          proposal.before do |s|
+            "Hello, #{s}"
+          end
+        end
+
+        if element == 2
+          proposal.propose do
+            "World"
+          end
+        end
+      end
+
+      proposal = Proposal.new do |proposal, element|
+        if element == 1
+          proposal.wrap do |p|
+            "Hello, #{p.value}"
+            # or?
+            "Hello, #{p.call}"
+          end
+        end
+
+        if element == 2
+          proposal.propose do
+            "World"
+          end
+        end
+      end
+
+      # You can always feed a Proposal more iterations, but it may be finalized
+      # already. Or, it may never finalize!
+      proposal.feed(1, 2, 3) do |proposition|
+        # whether a value was proposed or finalized
+      end
+      # or
+      final_value = proposal.feed(1, 2, 3)
     end
   end
 
