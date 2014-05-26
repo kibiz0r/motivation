@@ -230,6 +230,13 @@ puts "or to produce a value for this iteration, and continue here on the next it
 puts "or produce a value for this iteration, and continue with a different block on the next iteration"
 puts "or just go on to the next iteration"
 
+puts "You should also be able to delegate to another Proposal,"
+puts "such that their control statements bubble up to you"
+puts "and you can provide blocks to translate arguments from the parent Proposal to child and vice-versa"
+
+puts "You should also be able to change the meaning of the control statements,"
+puts "so that when someone finalizes you can do something special"
+
 # Proposal.new do |p, e, &b|
 #   e.call p, b
 # end

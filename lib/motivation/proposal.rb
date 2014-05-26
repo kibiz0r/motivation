@@ -9,11 +9,129 @@ module Motivation
     #   @args = args || []
     #   @handlers = handlers
     # end
-    def initialize(enumerator, *args, &block)
-      @enumerator = enumerator.to_enum
-      # @target = target
-      @args = args
-      @block = block
+
+    include Enumerable
+
+    def initialize(&block)
+      # @current = Proposition.new(
+      #   on_continue: ->(p) { @current = p },
+      #   &block
+      # )
+      @current = Proposition.new &block
+    end
+
+    def next
+      @next.call @current
+    end
+
+    def each
+      return enum_for :each unless block_given?
+
+      result = @current.call Proposition.new
+
+      yield result
+
+      if result.is_a? Proposal
+        result.each do |r|
+          yield r
+        end
+      end
+
+      nil
+    end
+
+    def call(*args)
+      return @current.call *args
+
+      # continuation = nil
+      # result = @block.call Proposition.new(
+      #   on_continue_with: ->(p) { continuation = p }
+      # )
+
+      # if result.is_a? Proposal
+      #   return result.call
+      # end
+
+      # if continuation
+      #   return continuation.call
+      # end
+
+      # result
+    end
+
+    class Proposition
+      def initialize(handlers = {}, &block)
+        @handlers = handlers
+        @block = block
+        @value_block = nil
+      end
+
+      def continue_with(proposal)
+        if handler = @handlers[:on_continue_with]
+          handler.call proposal
+        end
+
+        nil
+      end
+
+      def continue
+        if handler = @handlers[:on_continue]
+          handler.call self
+        end
+
+        nil
+      end
+
+      def propose(&value_block)
+        # @value_block = value_block
+
+        if handler = @handlers[:on_propose]
+          handler.call value_block
+        end
+
+        nil
+      end
+
+      def has_value?
+        !@value.nil? || !@value_block.nil?
+      end
+
+      def value
+        # This will re-call @value_block if it returns nil...
+        if @value.nil? && !@value_block.nil?
+          @value = @value_block.call
+        else
+          @value
+        end
+      end
+
+      def call(*args)
+        return value if has_value?
+
+        final_block = callcc do |cc|
+          @handlers[:on_propose] = lambda do |value_block|
+            @value_block = value_block
+          end
+          @handlers[:on_final] = cc
+          return_value = @block.call self, *args
+          @value = return_value unless has_value?
+          nil
+        end
+
+        @value_block = final_block unless has_value?
+
+        return value if has_value?
+      end
+
+      def final(&value_block)
+        # @value_block = value_block
+
+        if handler = @handlers[:on_final]
+          handler.call value_block
+        end
+
+        nil
+      end
     end
 
     # def value(*args)
@@ -35,24 +153,24 @@ module Motivation
     #   @proposition ||= Proposition.new
     # end
 
-    def each(&block)
-      args = @args
-      Enumerator.new do |yielder|
-        callcc do |finaled| # Can be simulated with throw/catch.
-          @enumerator.each do |element|
-            callcc do |proposed|
-              proposition = Proposition.new(
-                on_propose: ->(p) { puts "yielding"; yielder.yield p; proposed.call; puts "done yielding" },
-                on_final: ->(p) { puts "finaling"; yielder.yield p; finaled.call; puts "done finaling" },
-                on_continue: ->(a) { args = a.call; puts "continuing with #{args}"; proposed.call }
-              )
-              puts "calling with #{args}"
-              @block.call proposition, element, *args
-            end
-          end
-        end
-      end
-    end
+    # def each(&block)
+    #   args = @args
+    #   Enumerator.new do |yielder|
+    #     callcc do |finaled| # Can be simulated with throw/catch.
+    #       @enumerator.each do |element|
+    #         callcc do |proposed|
+    #           proposition = Proposition.new(
+    #             on_propose: ->(p) { puts "yielding"; yielder.yield p; proposed.call; puts "done yielding" },
+    #             on_final: ->(p) { puts "finaling"; yielder.yield p; finaled.call; puts "done finaling" },
+    #             on_continue: ->(a) { args = a.call; puts "continuing with #{args}"; proposed.call }
+    #           )
+    #           puts "calling with #{args}"
+    #           @block.call proposition, element, *args
+    #         end
+    #       end
+    #     end
+    #   end
+    # end
     # def each(*args, &block)
     #   return enum_for :each, *args unless block_given?
 
@@ -117,29 +235,29 @@ module Motivation
       r
     end
 
-    class Proposition
-      def initialize(handlers = {})
-        # @args = args
-        @handlers = handlers
-      end
+    # class Proposition
+    #   def initialize(handlers = {})
+    #     # @args = args
+    #     @handlers = handlers
+    #   end
 
-      def propose(&block)
-        if h = @handlers[:on_propose]
-          h.call block
-        end
-      end
+    #   def propose(&block)
+    #     if h = @handlers[:on_propose]
+    #       h.call block
+    #     end
+    #   end
 
-      def final(&block)
-        if h = @handlers[:on_final]
-          h.call block
-        end
-      end
+    #   def final(&block)
+    #     if h = @handlers[:on_final]
+    #       h.call block
+    #     end
+    #   end
 
-      def continue(&block)
-        if h = @handlers[:on_continue]
-          h.call block
-        end
-      end
-    end
+    #   def continue(&block)
+    #     if h = @handlers[:on_continue]
+    #       h.call block
+    #     end
+    #   end
+    # end
   end
 end
