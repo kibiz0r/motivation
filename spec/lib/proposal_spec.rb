@@ -132,7 +132,9 @@ describe Proposal do
   describe "a sane world" do
     it "looks like this" do
       proposal = Proposal.new do |proposal|
-        5
+        proposal.propose do
+          5
+        end
       end
       expect(proposal.call).to eq(5)
 
@@ -150,6 +152,13 @@ describe Proposal do
       # expect(proposal.call).to eq(5)
       # expect(proposal.to_a).to eq([3, 5])
 
+      # When you do Proposition#propose, you are setting a new value_block on
+      # it, which will only be evaluated if it is the last value_block set when
+      # the Proposal's block finishes.
+      #
+      # The Proposal's block can use the current Proposition to provide a
+      # value_block in terms of the existing value_block, or even to wrap
+      # further proposed value_blocks.
       proposal = Proposal.new do |proposal|
         proposal.propose do
           8

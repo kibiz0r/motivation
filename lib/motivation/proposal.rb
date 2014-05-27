@@ -17,7 +17,7 @@ module Motivation
       #   on_continue: ->(p) { @current = p },
       #   &block
       # )
-      @current = Proposition.new &block
+      @block = block
     end
 
     def next
@@ -41,7 +41,10 @@ module Motivation
     end
 
     def call(*args)
-      return @current.call *args
+      current = Proposition.new
+      return_value = @block.call current, *args
+      current.default { return_value }
+      current.value
 
       # continuation = nil
       # result = @block.call Proposition.new(
@@ -131,6 +134,9 @@ module Motivation
         end
 
         nil
+      end
+
+      def default(&value_block)
       end
     end
 

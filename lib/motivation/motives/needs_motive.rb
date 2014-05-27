@@ -17,26 +17,24 @@ module Motivation
         new_motive.resolve_self mote, *resolve_self(mote)
       end
 
-      def propose_resolution(resolution, target)
-        if target == self
-          resolution.propose do
-            resolve_self
+      def propose_resolution
+        Proposal.new do |resolution, target, *args|
+          if target == self
+            resolution.propose do
+              resolve_self
+            end
           end
-        end
 
-        # if target == mote
-        #   resolution.final do
-        #     puts "resolving with needs"
-        #     mote.new self.resolve
-        #   end
-        # end
+          if target == mote
+            resolution.final do
+              target.new resolve
+            end
+          end
 
-        if target.is_a? NewMotive
-          resolution.continue do
-            puts "continuing NewMotive!"
-            r = resolve_self
-            puts "with #{r}"
-            r
+          if target.is_a? NewMotive
+            resolution.final do
+              target.resolve_self resolve
+            end
           end
         end
         # resolution.for self do
