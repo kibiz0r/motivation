@@ -138,6 +138,23 @@ describe Proposal do
       end
       expect(proposal.call).to eq(5)
 
+      proposal1 = Proposal.new do |p1|
+        p1.propose do
+          1
+        end
+      end
+      proposal2 = Proposal.new do |p2|
+        p2.final do
+          2
+        end
+      end
+      proposal3 = Proposal.new do |p3|
+        p3.final do
+          3
+        end
+      end
+      expect((proposal1 + proposal2 + proposal3).call).to eq(2)
+
       # proposal = Proposal.new do |proposal|
       #   Proposal.new do |inner|
       #     5
